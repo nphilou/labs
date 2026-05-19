@@ -38,3 +38,9 @@ python scripts_send_deploy_email.py hello --secrets-file /path/to/resend.env
 ```
 
 This sends a message with link: `https://app.nphilou.ch/hello`.
+
+
+## Apps
+
+- `hello`: static HTML at `https://app.nphilou.ch/hello`
+- `streamlit-basic`: Streamlit demo at `https://app.nphilou.ch/streamlit-basic`

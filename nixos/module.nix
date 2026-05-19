@@ -11,6 +11,7 @@ in
 {
   imports = [
     ./apps/hello.nix
+    ./apps/streamlit-basic.nix
   ];
 
   options.nphilou.labs = {
