@@ -7,7 +7,7 @@ from pathlib import Path
 import resend
 from dotenv import load_dotenv
 
-DEFAULT_SECRETS_FILE = "/var/lib/labs/secrets/resend.env"
+DEFAULT_SECRETS_FILE = "/var/lib/labs/secrets/labs.env"
 
 
 def parse_args() -> argparse.Namespace:
