@@ -21,9 +21,14 @@
           runHook postInstall
         '';
       };
+      sendDeployEmail = pkgs.writers.writePython3Bin "labs-send-deploy-email" {
+        libraries = with pkgs.python3Packages; [ resend python-dotenv ];
+        flakeIgnore = [ "E501" ];
+      } (builtins.readFile ./scripts_send_deploy_email.py);
     in
     {
       packages.${system}.hello = hello;
+      packages.${system}.send-deploy-email = sendDeployEmail;
       packages.${system}.default = hello;
 
       nixosModules.default = import ./nixos/module.nix;
