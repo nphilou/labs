@@ -1,0 +1,17 @@
+name: Deploy NUC
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  trigger-nixos-config:
+    name: Trigger nixos-config deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dispatch deploy workflow
+        env:
+          GH_TOKEN: ${{ secrets.NIXOS_CONFIG_DISPATCH_TOKEN }}
+        run: gh workflow run deploy.yml --repo nphilou/nixos-config --ref master
