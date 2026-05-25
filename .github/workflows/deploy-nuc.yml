@@ -14,4 +14,4 @@ jobs:
       - name: Dispatch deploy workflow
         env:
           GH_TOKEN: ${{ secrets.NIXOS_CONFIG_DISPATCH_TOKEN }}
-        run: gh workflow run deploy.yml --repo nphilou/nixos-config --ref master
+        run: gh workflow run deploy.yml --repo nphilou/nixos-config --ref master -f update_labs=true
