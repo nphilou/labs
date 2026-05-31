@@ -12,6 +12,7 @@ in
   imports = [
     ./apps/hello.nix
     ./apps/streamlit-basic.nix
+    ./apps/buyvsrent.nix
   ];
 
   options.nphilou.labs = {
