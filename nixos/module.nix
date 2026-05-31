@@ -13,6 +13,7 @@ in
     ./apps/hello.nix
     ./apps/streamlit-basic.nix
     ./apps/buyvsrent.nix
+    ./apps/liana.nix
   ];
 
   options.nphilou.labs = {

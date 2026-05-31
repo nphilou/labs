@@ -21,6 +21,18 @@
           runHook postInstall
         '';
       };
+      liana = pkgs.stdenvNoCC.mkDerivation {
+        pname = "labs-liana";
+        version = "0.1.0";
+        src = ./apps/liana;
+
+        installPhase = ''
+          runHook preInstall
+          mkdir -p $out
+          cp -r . $out/
+          runHook postInstall
+        '';
+      };
       sendDeployEmail = pkgs.writers.writePython3Bin "labs-send-deploy-email" {
         libraries = with pkgs.python3Packages; [ resend python-dotenv ];
         flakeIgnore = [ "E501" ];
@@ -29,6 +41,7 @@
     {
       packages.${system} = {
         hello = hello;
+        liana = liana;
         send-deploy-email = sendDeployEmail;
         default = hello;
       };

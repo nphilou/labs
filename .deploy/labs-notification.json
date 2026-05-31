@@ -1,5 +1,5 @@
 {
-  "service": "buyvsrent",
-  "url": "https://app.nphilou.ch/buyvsrent",
-  "summary": "Added the Vaud buy-vs-rent Streamlit simulator service."
+  "service": "liana",
+  "url": "https://app.nphilou.ch/liana",
+  "summary": "Added a minimalist portfolio website for Liana, an artist and ceramist."
 }
