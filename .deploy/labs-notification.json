@@ -1,5 +1,5 @@
 {
-  "service": "hello",
-  "url": "https://app.nphilou.ch/hello",
-  "summary": "Initial labs deploy notification metadata."
+  "service": "buyvsrent",
+  "url": "https://app.nphilou.ch/buyvsrent",
+  "summary": "Added the Vaud buy-vs-rent Streamlit simulator service."
 }
