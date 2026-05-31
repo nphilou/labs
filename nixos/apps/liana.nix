@@ -2,6 +2,7 @@
 
 let
   cfg = config.nphilou.labs;
+  port = (import ../ports.nix).liana;
   liana = pkgs.stdenvNoCC.mkDerivation {
     pname = "labs-liana";
     version = "0.1.0";
@@ -24,7 +25,7 @@ in
 
       serviceConfig = {
         DynamicUser = true;
-        ExecStart = "${pkgs.python3}/bin/python -m http.server 9104 --bind 127.0.0.1 --directory ${liana}";
+        ExecStart = "${pkgs.python3}/bin/python -m http.server ${toString port} --bind 127.0.0.1 --directory ${liana}";
         Restart = "always";
         RestartSec = "5s";
       };
@@ -36,7 +37,7 @@ in
       };
 
       "/liana/" = {
-        proxyPass = "http://127.0.0.1:9104/";
+        proxyPass = "http://127.0.0.1:${toString port}/";
       };
     };
   };

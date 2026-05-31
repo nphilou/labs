@@ -2,6 +2,7 @@
 
 let
   cfg = config.nphilou.labs;
+  port = (import ../ports.nix)."apartment-tracker";
 in
 {
   config = lib.mkIf cfg.enable {
@@ -20,7 +21,7 @@ in
         WorkingDirectory = ../../apps/apartment-tracker;
         ExecStart = ''
           ${pkgs.python3.withPackages (ps: with ps; [ streamlit pandas ])}/bin/streamlit run app.py \
-            --server.port 9103 \
+            --server.port ${toString port} \
             --server.address 127.0.0.1 \
             --server.headless true
         '';
@@ -35,7 +36,7 @@ in
       };
 
       "/apartment-tracker/" = {
-        proxyPass = "http://127.0.0.1:9103/";
+        proxyPass = "http://127.0.0.1:${toString port}/";
         proxyWebsockets = true;
       };
     };

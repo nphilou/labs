@@ -2,6 +2,7 @@
 
 let
   cfg = config.nphilou.labs;
+  port = (import ../ports.nix)."streamlit-basic";
 in
 {
   config = lib.mkIf cfg.enable {
@@ -15,7 +16,7 @@ in
         WorkingDirectory = ../../apps/streamlit-basic;
         ExecStart = ''
           ${pkgs.python3.withPackages (ps: with ps; [ streamlit pandas numpy ])}/bin/streamlit run app.py \
-            --server.port 9102 \
+            --server.port ${toString port} \
             --server.address 127.0.0.1 \
             --server.headless true
         '';
@@ -30,7 +31,7 @@ in
       };
 
       "/streamlit-basic/" = {
-        proxyPass = "http://127.0.0.1:9102/";
+        proxyPass = "http://127.0.0.1:${toString port}/";
         proxyWebsockets = true;
       };
     };

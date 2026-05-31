@@ -2,6 +2,9 @@
 
 let
   cfg = config.nphilou.labs;
+  ports = import ./ports.nix;
+  portValues = builtins.attrValues ports;
+  uniquePortValues = lib.unique portValues;
   sendDeployEmail = pkgs.writers.writePython3Bin "labs-send-deploy-email" {
     libraries = with pkgs.python3Packages; [ resend python-dotenv ];
     flakeIgnore = [ "E501" ];
@@ -22,6 +25,13 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    assertions = [
+      {
+        assertion = builtins.length portValues == builtins.length uniquePortValues;
+        message = "nphilou.labs service ports must be unique. Check nixos/ports.nix.";
+      }
+    ];
+
     environment.systemPackages = [ sendDeployEmail ];
   };
 }

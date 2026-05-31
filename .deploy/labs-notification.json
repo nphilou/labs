@@ -1,5 +1,5 @@
 {
   "service": "apartment-tracker",
   "url": "https://app.nphilou.ch/apartment-tracker",
-  "summary": "Fixed the apartment tracker startup by using Streamlit-compatible optional numeric entry fields."
+  "summary": "Moved apartment tracker to a unique service port and centralized labs port assignments with a duplicate-port assertion."
 }

@@ -47,3 +47,9 @@ This sends a message with link: `https://app.nphilou.ch/hello`.
 - `streamlit-basic`: Streamlit demo at `https://app.nphilou.ch/streamlit-basic`
 - `buyvsrent`: Vaud buy-vs-rent Streamlit simulator at `https://app.nphilou.ch/buyvsrent`
 - `liana`: minimalist artist and ceramist portfolio at `https://app.nphilou.ch/liana`
+
+## Service ports
+
+Labs app service ports are assigned in `nixos/ports.nix`. The NixOS module
+asserts that all assigned ports are unique, so `nixos-rebuild` fails during
+evaluation if a new app reuses an existing port.

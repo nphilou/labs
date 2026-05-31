@@ -2,6 +2,7 @@
 
 let
   cfg = config.nphilou.labs;
+  port = (import ../ports.nix).buyvsrent;
   python = pkgs.python3.withPackages (ps: with ps; [
     joblib
     numpy
@@ -33,7 +34,7 @@ let
       export STREAMLIT_BROWSER_GATHER_USAGE_STATS=false
 
       exec streamlit run "$repo/src/visualizer.py" \
-        --server.port 9103 \
+        --server.port ${toString port} \
         --server.address 127.0.0.1 \
         --server.headless true \
         --server.fileWatcherType none
@@ -64,7 +65,7 @@ in
       };
 
       "/buyvsrent/" = {
-        proxyPass = "http://127.0.0.1:9103/";
+        proxyPass = "http://127.0.0.1:${toString port}/";
         proxyWebsockets = true;
       };
     };

@@ -2,6 +2,7 @@
 
 let
   cfg = config.nphilou.labs;
+  port = (import ../ports.nix).hello;
   hello = pkgs.stdenvNoCC.mkDerivation {
     pname = "labs-hello";
     version = "0.1.0";
@@ -24,7 +25,7 @@ in
 
       serviceConfig = {
         DynamicUser = true;
-        ExecStart = "${pkgs.python3}/bin/python -m http.server 9101 --bind 127.0.0.1 --directory ${hello}";
+        ExecStart = "${pkgs.python3}/bin/python -m http.server ${toString port} --bind 127.0.0.1 --directory ${hello}";
         Restart = "always";
         RestartSec = "5s";
       };
@@ -36,7 +37,7 @@ in
       };
 
       "/hello/" = {
-        proxyPass = "http://127.0.0.1:9101/";
+        proxyPass = "http://127.0.0.1:${toString port}/";
       };
     };
   };
