@@ -1,5 +1,5 @@
 {
   "service": "apartment-tracker",
   "url": "https://app.nphilou.ch/apartment-tracker",
-  "summary": "Added a Streamlit apartment search tracker with SQLite-backed listing, status, price, size, rooms, and commute fields."
+  "summary": "Fixed the apartment tracker startup by using Streamlit-compatible optional numeric entry fields."
 }

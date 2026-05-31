@@ -83,6 +83,32 @@ def clean_text(value) -> str:
     return str(value).strip()
 
 
+def parse_optional_int(value: str, label: str) -> int | None:
+    value = value.strip()
+    if not value:
+        return None
+    try:
+        parsed = int(value)
+    except ValueError as exc:
+        raise ValueError(f"{label} must be a whole number.") from exc
+    if parsed < 0:
+        raise ValueError(f"{label} cannot be negative.")
+    return parsed
+
+
+def parse_optional_float(value: str, label: str) -> float | None:
+    value = value.strip()
+    if not value:
+        return None
+    try:
+        parsed = float(value)
+    except ValueError as exc:
+        raise ValueError(f"{label} must be a number.") from exc
+    if parsed < 0:
+        raise ValueError(f"{label} cannot be negative.")
+    return parsed
+
+
 def add_apartment(values: dict) -> None:
     now = dt.datetime.now(dt.UTC).isoformat(timespec="seconds")
     link = normalize_url(values["link"])
@@ -177,7 +203,7 @@ def save_apartments(df: pd.DataFrame) -> None:
 
 init_db()
 
-st.set_page_config(page_title="Apartment Tracker", page_icon=":material/home:", layout="wide")
+st.set_page_config(page_title="Apartment Tracker", layout="wide")
 st.title("Apartment tracker")
 
 with st.sidebar:
@@ -185,19 +211,17 @@ with st.sidebar:
     with st.form("add_apartment", clear_on_submit=True):
         link = st.text_input("Listing link")
         title = st.text_input("Title")
-        price_chf = st.number_input("Price CHF", min_value=0, step=50, value=None)
+        price_chf = st.text_input("Price CHF")
         col_a, col_b = st.columns(2)
         with col_a:
-            size_m2 = st.number_input("Size m2", min_value=0.0, step=1.0, value=None)
+            size_m2 = st.text_input("Size m2")
         with col_b:
-            rooms = st.number_input("Rooms", min_value=0.0, step=0.5, value=None)
+            rooms = st.text_input("Rooms")
         col_c, col_d = st.columns(2)
         with col_c:
-            time_to_work_min = st.number_input("Work min", min_value=0, step=1, value=None)
+            time_to_work_min = st.text_input("Work min")
         with col_d:
-            time_to_badminton_min = st.number_input(
-                "Badminton min", min_value=0, step=1, value=None
-            )
+            time_to_badminton_min = st.text_input("Badminton min")
         status = st.selectbox("Status", STATUSES)
         notes = st.text_area("Notes")
         submitted = st.form_submit_button("Add")
@@ -211,11 +235,15 @@ with st.sidebar:
                     {
                         "link": link,
                         "title": title,
-                        "price_chf": price_chf,
-                        "size_m2": size_m2,
-                        "rooms": rooms,
-                        "time_to_work_min": time_to_work_min,
-                        "time_to_badminton_min": time_to_badminton_min,
+                        "price_chf": parse_optional_int(price_chf, "Price CHF"),
+                        "size_m2": parse_optional_float(size_m2, "Size m2"),
+                        "rooms": parse_optional_float(rooms, "Rooms"),
+                        "time_to_work_min": parse_optional_int(
+                            time_to_work_min, "Work min"
+                        ),
+                        "time_to_badminton_min": parse_optional_int(
+                            time_to_badminton_min, "Badminton min"
+                        ),
                         "status": status,
                         "notes": notes,
                     }
@@ -223,6 +251,8 @@ with st.sidebar:
                 st.success("Apartment added.")
             except sqlite3.IntegrityError:
                 st.error("That link is already in the tracker.")
+            except ValueError as exc:
+                st.error(str(exc))
 
 df = load_apartments()
 
