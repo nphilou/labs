@@ -43,6 +43,7 @@ This sends a message with link: `https://app.nphilou.ch/hello`.
 ## Apps
 
 - `hello`: static HTML at `https://app.nphilou.ch/hello`
+- `apartment-tracker`: Streamlit apartment search tracker at `https://app.nphilou.ch/apartment-tracker`
 - `streamlit-basic`: Streamlit demo at `https://app.nphilou.ch/streamlit-basic`
 - `buyvsrent`: Vaud buy-vs-rent Streamlit simulator at `https://app.nphilou.ch/buyvsrent`
 - `liana`: minimalist artist and ceramist portfolio at `https://app.nphilou.ch/liana`

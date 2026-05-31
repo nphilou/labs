@@ -1,5 +1,5 @@
 {
-  "service": "liana",
-  "url": "https://app.nphilou.ch/liana",
-  "summary": "Added a minimalist portfolio website for Liana, an artist and ceramist."
+  "service": "apartment-tracker",
+  "url": "https://app.nphilou.ch/apartment-tracker",
+  "summary": "Added a Streamlit apartment search tracker with SQLite-backed listing, status, price, size, rooms, and commute fields."
 }

@@ -10,6 +10,7 @@ in
 
 {
   imports = [
+    ./apps/apartment-tracker.nix
     ./apps/hello.nix
     ./apps/streamlit-basic.nix
     ./apps/buyvsrent.nix
