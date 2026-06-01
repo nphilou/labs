@@ -1,5 +1,5 @@
 {
   "service": "apartment-tracker",
   "url": "https://app.nphilou.ch/apartment-tracker",
-  "summary": "Moved apartment tracker to a unique service port and centralized labs port assignments with a duplicate-port assertion."
+  "summary": "Added a read-only Work + badminton total column to the apartment tracker table."
 }

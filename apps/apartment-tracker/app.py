@@ -7,7 +7,6 @@ from urllib.parse import urlparse
 import pandas as pd
 import streamlit as st
 
-
 STATUSES = [
     "To review",
     "Contacted",
@@ -30,8 +29,7 @@ def connect() -> sqlite3.Connection:
 
 def init_db() -> None:
     with connect() as conn:
-        conn.execute(
-            """
+        conn.execute("""
             CREATE TABLE IF NOT EXISTS apartments (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 link TEXT NOT NULL UNIQUE,
@@ -46,8 +44,7 @@ def init_db() -> None:
                 created_at TEXT NOT NULL,
                 updated_at TEXT NOT NULL
             )
-            """
-        )
+            """)
 
 
 def normalize_url(value: str) -> str:
@@ -268,6 +265,14 @@ else:
 
     status_filter = st.multiselect("Status filter", STATUSES, default=STATUSES)
     visible = df[df["status"].isin(status_filter)].copy()
+    work_badminton_min = visible[["time_to_work_min", "time_to_badminton_min"]].sum(
+        axis=1, min_count=2
+    )
+    visible.insert(
+        visible.columns.get_loc("time_to_badminton_min") + 1,
+        "work_badminton_min",
+        work_badminton_min,
+    )
     visible.insert(0, "delete", False)
 
     edited = st.data_editor(
@@ -280,18 +285,27 @@ else:
             "id": st.column_config.NumberColumn("ID", disabled=True),
             "link": st.column_config.LinkColumn("Link", display_text="open"),
             "title": st.column_config.TextColumn("Title", width="medium"),
-            "price_chf": st.column_config.NumberColumn("Price", format="CHF %d", step=50),
-            "size_m2": st.column_config.NumberColumn("Size", format="%.1f m2", step=1.0),
+            "price_chf": st.column_config.NumberColumn(
+                "Price", format="CHF %d", step=50
+            ),
+            "size_m2": st.column_config.NumberColumn(
+                "Size", format="%.1f m2", step=1.0
+            ),
             "rooms": st.column_config.NumberColumn("Rooms", step=0.5),
-            "time_to_work_min": st.column_config.NumberColumn("Work", format="%d min", step=1),
+            "time_to_work_min": st.column_config.NumberColumn(
+                "Work", format="%d min", step=1
+            ),
             "time_to_badminton_min": st.column_config.NumberColumn(
                 "Badminton", format="%d min", step=1
+            ),
+            "work_badminton_min": st.column_config.NumberColumn(
+                "Work + badminton", format="%d min", disabled=True
             ),
             "status": st.column_config.SelectboxColumn("Status", options=STATUSES),
             "notes": st.column_config.TextColumn("Notes", width="large"),
             "updated_at": st.column_config.TextColumn("Updated", disabled=True),
         },
-        disabled=["id", "updated_at"],
+        disabled=["id", "work_badminton_min", "updated_at"],
     )
 
     if st.button("Save table changes", type="primary"):
