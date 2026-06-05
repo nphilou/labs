@@ -1,5 +1,5 @@
 {
-  "service": "apartment-tracker",
-  "url": "https://app.nphilou.ch/apartment-tracker",
-  "summary": "Added a read-only Work + badminton total column to the apartment tracker table."
+  "service": "multiple",
+  "url": "https://app.nphilou.ch/",
+  "summary": "Updated the labs deploy workflow to request a labs flake input update from nixos-config and wait for the dispatched deploy run."
 }

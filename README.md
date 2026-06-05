@@ -1,5 +1,19 @@
 # nphilou/labs
 
+## Architecture
+
+```mermaid
+flowchart TD
+    prompt["Prompt<br/>Describe the site or change"] --> codex["Codex<br/>Turns the request into code"]
+    codex --> repo["Labs repository<br/>App code and deployment config"]
+    repo --> deploy["Deploy pipeline<br/>Builds and applies the NixOS configuration"]
+    deploy --> server["Server runtime<br/>systemd starts the app service"]
+    server --> routing["Public routing<br/>nginx maps the service to app.nphilou.ch"]
+    routing --> website["Website<br/>https://app.nphilou.ch/&lt;service&gt;/"]
+
+    repo --> notification["Telegram deploy summary<br/>Service URL and change summary"]
+```
+
 ## Resend deploy notification
 
 A helper script is included to send a deployment email with the app URL.

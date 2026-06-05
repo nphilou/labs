@@ -34,7 +34,7 @@ jobs:
           output="$(gh workflow run deploy.yml \
             --repo nphilou/nixos-config \
             --ref master \
-            -f update_labs=true 2>&1)"
+            -f flake_update=labs)"
 
           printf '%s\n' "$output"
 
