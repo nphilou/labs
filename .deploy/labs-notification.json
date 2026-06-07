@@ -1,5 +1,5 @@
 {
-  "service": "multiple",
-  "url": "https://app.nphilou.ch/",
-  "summary": "Updated the labs deploy workflow to request a labs flake input update from nixos-config and wait for the dispatched deploy run."
+  "service": "liana",
+  "url": "https://app.nphilou.ch/liana",
+  "summary": "Replaced Liana's portfolio with a new rich design: full-page hero, animated scroll reveals, portfolio grid, process section, exhibition history, and contact form."
 }

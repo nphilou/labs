@@ -1,425 +1,1446 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta
-      name="description"
-      content="Minimal portfolio website for Liana, an artist and ceramist creating quiet handmade forms."
-    >
-    <title>Liana — Artist & Ceramist</title>
-    <style>
-      :root {
-        color-scheme: light;
-        --ink: #27231f;
-        --muted: #716b63;
-        --paper: #f7f3ec;
-        --clay: #b98263;
-        --stone: #dfd7ca;
-        --porcelain: #fffdfa;
-        --line: rgba(39, 35, 31, 0.14);
-        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      }
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Liana Khachatryan — Artist</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@200;300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --clay: #C4926A;
+    --cream: #F5EFE6;
+    --bark: #3D2B1F;
+    --ash: #8E7B6E;
+    --smoke: #EAE0D5;
+    --ink: #1A1209;
+    --leaf: #7A8C6E;
+    --sand: #D4C5B0;
+  }
 
-      * {
-        box-sizing: border-box;
-      }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
 
-      html {
-        scroll-behavior: smooth;
-      }
+  html { scroll-behavior: smooth; }
 
-      body {
-        margin: 0;
-        min-height: 100vh;
-        background:
-          radial-gradient(circle at 82% 12%, rgba(185, 130, 99, 0.13), transparent 31rem),
-          linear-gradient(180deg, var(--paper), #eee7db 100%);
-        color: var(--ink);
-      }
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+    cursor: none;
+  }
 
-      a {
-        color: inherit;
-        text-decoration: none;
-      }
+  /* Custom cursor */
+  .cursor {
+    width: 10px; height: 10px;
+    background: var(--clay);
+    border-radius: 50%;
+    position: fixed;
+    top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.15s ease, opacity 0.2s;
+    transform: translate(-50%, -50%);
+  }
+  .cursor-ring {
+    width: 32px; height: 32px;
+    border: 1px solid var(--clay);
+    border-radius: 50%;
+    position: fixed;
+    top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9998;
+    transition: transform 0.35s ease;
+    transform: translate(-50%, -50%);
+    opacity: 0.6;
+  }
 
-      .page {
-        width: min(1120px, calc(100% - 40px));
-        margin: 0 auto;
-      }
+  /* Noise texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.4;
+  }
 
-      header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 28px 0;
-        color: var(--muted);
-        font-size: 0.78rem;
-        letter-spacing: 0.18em;
-        text-transform: uppercase;
-      }
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 28px 60px;
+    mix-blend-mode: multiply;
+  }
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--bark);
+    font-weight: 400;
+  }
+  .nav-links {
+    display: flex;
+    gap: 40px;
+    list-style: none;
+  }
+  .nav-links a {
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--ash);
+    transition: color 0.3s;
+  }
+  .nav-links a:hover { color: var(--clay); }
 
-      .brand {
-        color: var(--ink);
-        font-weight: 600;
-      }
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+    overflow: hidden;
+  }
 
-      nav {
-        display: flex;
-        gap: clamp(16px, 4vw, 34px);
-      }
+  .hero-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0 60px 80px;
+    position: relative;
+    z-index: 2;
+  }
 
-      .hero {
-        min-height: calc(100vh - 86px);
-        display: grid;
-        grid-template-columns: minmax(0, 1.05fr) minmax(280px, 0.72fr);
-        gap: clamp(34px, 7vw, 88px);
-        align-items: center;
-        padding: 42px 0 96px;
-      }
+  .hero-eyebrow {
+    font-size: 0.65rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--clay);
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp 1s 0.3s forwards;
+  }
 
-      .eyebrow {
-        margin: 0 0 24px;
-        color: var(--clay);
-        font-size: 0.75rem;
-        font-weight: 700;
-        letter-spacing: 0.24em;
-        text-transform: uppercase;
-      }
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(4rem, 7vw, 7rem);
+    line-height: 0.92;
+    font-weight: 300;
+    color: var(--bark);
+    opacity: 0;
+    animation: fadeUp 1.1s 0.5s forwards;
+  }
 
-      h1 {
-        margin: 0;
-        max-width: 12ch;
-        font-family: Georgia, "Times New Roman", serif;
-        font-size: clamp(4.8rem, 16vw, 11.5rem);
-        font-weight: 400;
-        letter-spacing: -0.075em;
-        line-height: 0.82;
-      }
+  .hero-title em {
+    font-style: italic;
+    color: var(--clay);
+  }
 
-      .intro {
-        max-width: 36rem;
-        margin: 34px 0 0;
-        color: var(--muted);
-        font-size: clamp(1.1rem, 2vw, 1.45rem);
-        line-height: 1.7;
-      }
+  .hero-sub {
+    margin-top: 32px;
+    font-size: 0.85rem;
+    line-height: 1.9;
+    color: var(--ash);
+    max-width: 340px;
+    opacity: 0;
+    animation: fadeUp 1s 0.8s forwards;
+  }
 
-      .actions {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 14px;
-        margin-top: 38px;
-      }
+  .hero-cta {
+    margin-top: 48px;
+    display: inline-flex;
+    align-items: center;
+    gap: 16px;
+    text-decoration: none;
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--bark);
+    opacity: 0;
+    animation: fadeUp 1s 1s forwards;
+    transition: gap 0.3s;
+  }
+  .hero-cta:hover { gap: 28px; }
+  .hero-cta span {
+    width: 40px;
+    height: 1px;
+    background: var(--clay);
+    display: block;
+    transition: width 0.3s;
+  }
+  .hero-cta:hover span { width: 60px; }
 
-      .button {
-        border: 1px solid var(--ink);
-        border-radius: 999px;
-        padding: 13px 22px;
-        font-size: 0.82rem;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-        transition: background 180ms ease, color 180ms ease, transform 180ms ease;
-      }
+  .hero-right {
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    animation: fadeIn 1.4s 0.2s forwards;
+  }
 
-      .button:first-child,
-      .button:hover {
-        background: var(--ink);
-        color: var(--porcelain);
-        transform: translateY(-1px);
-      }
+  .hero-image-grid {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-rows: 60% 40%;
+    gap: 3px;
+  }
 
-      .vessel-card {
-        position: relative;
-        min-height: 540px;
-        border: 1px solid var(--line);
-        border-radius: 44px;
-        overflow: hidden;
-        background: rgba(255, 253, 250, 0.54);
-        box-shadow: 0 30px 90px rgba(39, 35, 31, 0.08);
-      }
+  .hero-img-main {
+    background: linear-gradient(145deg, #C4926A 0%, #8E5A36 30%, #4A3020 70%, #C4926A 100%);
+    position: relative;
+    overflow: hidden;
+  }
 
-      .vessel-card::before {
-        content: "";
-        position: absolute;
-        inset: 32px;
-        border: 1px solid var(--line);
-        border-radius: 32px;
-      }
+  .hero-img-main::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 30% 40%, rgba(196,146,106,0.3) 0%, transparent 60%);
+  }
 
-      .vessel {
-        position: absolute;
-        left: 50%;
-        bottom: 64px;
-        width: min(72%, 320px);
-        aspect-ratio: 0.72;
-        transform: translateX(-50%);
-        border-radius: 45% 45% 30% 30% / 22% 22% 58% 58%;
-        background:
-          linear-gradient(90deg, rgba(255,255,255,0.32), transparent 24% 72%, rgba(81,59,47,0.12)),
-          linear-gradient(180deg, #d7b39a, #ad765d 48%, #805d4d);
-        box-shadow: inset -28px 0 44px rgba(80, 57, 45, 0.17), 0 28px 52px rgba(92, 69, 55, 0.2);
-      }
+  /* SVG ceramic illustration */
+  .ceramic-svg {
+    position: absolute;
+    bottom: -20px;
+    right: 10%;
+    width: 55%;
+    opacity: 0.9;
+  }
 
-      .vessel::before {
-        content: "";
-        position: absolute;
-        left: 50%;
-        top: -7%;
-        width: 54%;
-        height: 16%;
-        transform: translateX(-50%);
-        border-radius: 50%;
-        background: #654a3d;
-        box-shadow: inset 0 12px 18px rgba(15, 12, 10, 0.34), 0 8px 0 rgba(255,255,255,0.12);
-      }
+  .hero-img-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3px;
+  }
+  .hero-img-sm {
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-img-sm:nth-child(1) {
+    background: linear-gradient(160deg, #7A8C6E 0%, #4A5C42 100%);
+  }
+  .hero-img-sm:nth-child(2) {
+    background: linear-gradient(160deg, #D4C5B0 0%, #C4926A 60%, #8E5A36 100%);
+  }
 
-      .vessel::after {
-        content: "";
-        position: absolute;
-        inset: 17% 18% auto auto;
-        width: 18%;
-        height: 56%;
-        border-radius: 50%;
-        background: rgba(255, 253, 250, 0.18);
-        filter: blur(2px);
-      }
+  .img-label {
+    position: absolute;
+    bottom: 16px;
+    left: 20px;
+    font-size: 0.6rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.7);
+  }
 
-      .card-label {
-        position: absolute;
-        left: 34px;
-        right: 34px;
-        bottom: 30px;
-        display: flex;
-        justify-content: space-between;
-        gap: 18px;
-        color: var(--muted);
-        font-size: 0.75rem;
-        letter-spacing: 0.16em;
-        text-transform: uppercase;
-      }
+  /* Floating year badge */
+  .year-badge {
+    position: absolute;
+    top: 40%;
+    left: -20px;
+    background: var(--cream);
+    border: 1px solid var(--sand);
+    padding: 16px 20px;
+    z-index: 3;
+    opacity: 0;
+    animation: fadeIn 1s 1.2s forwards;
+  }
+  .year-badge span {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+    color: var(--clay);
+    display: block;
+    line-height: 1;
+  }
+  .year-badge small {
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ash);
+  }
 
-      section {
-        padding: 86px 0;
-        border-top: 1px solid var(--line);
-      }
+  /* Scroll indicator */
+  .scroll-hint {
+    position: absolute;
+    bottom: 40px;
+    right: 60px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--ash);
+    opacity: 0;
+    animation: fadeIn 1s 1.5s forwards;
+  }
+  .scroll-line {
+    width: 1px;
+    height: 50px;
+    background: linear-gradient(to bottom, var(--clay), transparent);
+    animation: scrollPulse 2s 2s infinite;
+  }
 
-      .section-grid {
-        display: grid;
-        grid-template-columns: 0.42fr 1fr;
-        gap: clamp(28px, 7vw, 86px);
-      }
+  /* ABOUT */
+  .about {
+    padding: 140px 60px;
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 100px;
+    align-items: center;
+    background: var(--smoke);
+    position: relative;
+    overflow: hidden;
+  }
 
-      h2 {
-        margin: 0;
-        font-family: Georgia, "Times New Roman", serif;
-        font-size: clamp(2.2rem, 5vw, 4rem);
-        font-weight: 400;
-        letter-spacing: -0.04em;
-      }
+  .about::before {
+    content: 'ABOUT';
+    position: absolute;
+    top: 60px;
+    right: -20px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 10rem;
+    color: transparent;
+    -webkit-text-stroke: 1px var(--sand);
+    letter-spacing: 0.1em;
+    pointer-events: none;
+    opacity: 0.4;
+  }
 
-      .section-copy {
-        margin: 0;
-        color: var(--muted);
-        font-size: clamp(1.04rem, 1.8vw, 1.25rem);
-        line-height: 1.8;
-      }
+  .about-image {
+    position: relative;
+  }
 
-      .work-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 18px;
-      }
+  .about-portrait {
+    width: 100%;
+    aspect-ratio: 3/4;
+    background: linear-gradient(160deg, #8E7B6E 0%, #4A3020 50%, #C4926A 100%);
+    position: relative;
+    overflow: hidden;
+  }
 
-      .work {
-        min-height: 310px;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-end;
-        padding: 24px;
-        border: 1px solid var(--line);
-        border-radius: 30px;
-        background: var(--porcelain);
-        overflow: hidden;
-        position: relative;
-      }
+  /* Portrait SVG placeholder */
+  .portrait-figure {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 75%;
+  }
 
-      .work::before {
-        content: "";
-        position: absolute;
-        inset: 28px 26px 82px;
-        border-radius: 48% 48% 34% 34%;
-        background: var(--stone);
-      }
+  .about-accent {
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    width: 120px;
+    height: 120px;
+    border: 1px solid var(--clay);
+    z-index: -1;
+  }
 
-      .work:nth-child(2)::before {
-        inset: 48px 44px 92px;
-        border-radius: 999px 999px 42% 42%;
-        background: #caa18a;
-      }
+  .about-tag {
+    position: absolute;
+    bottom: -20px;
+    left: -20px;
+    background: var(--bark);
+    color: var(--cream);
+    padding: 20px 28px;
+  }
+  .about-tag strong {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+    display: block;
+    font-weight: 300;
+  }
+  .about-tag small {
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    opacity: 0.6;
+  }
 
-      .work:nth-child(3)::before {
-        inset: 60px 34px 108px;
-        border-radius: 52% 52% 22% 22%;
-        background: #eee8dd;
-        box-shadow: inset 0 0 0 18px #b98263;
-      }
+  .section-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--clay);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .section-label::before {
+    content: '';
+    width: 24px;
+    height: 1px;
+    background: var(--clay);
+  }
 
-      .work h3,
-      .work p {
-        position: relative;
-        margin: 0;
-      }
+  .about-heading {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.5rem, 4vw, 3.5rem);
+    font-weight: 300;
+    line-height: 1.15;
+    color: var(--bark);
+    margin-bottom: 28px;
+  }
 
-      .work h3 {
-        font-family: Georgia, "Times New Roman", serif;
-        font-size: 1.5rem;
-        font-weight: 400;
-      }
+  .about-heading em {
+    font-style: italic;
+    color: var(--clay);
+  }
 
-      .work p {
-        margin-top: 6px;
-        color: var(--muted);
-        line-height: 1.5;
-      }
+  .about-text {
+    font-size: 0.9rem;
+    line-height: 1.95;
+    color: var(--ash);
+    margin-bottom: 20px;
+  }
 
-      .contact {
-        display: flex;
-        align-items: flex-end;
-        justify-content: space-between;
-        gap: 32px;
-      }
+  .disciplines {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 36px;
+  }
+  .discipline-tag {
+    padding: 8px 18px;
+    border: 1px solid var(--sand);
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ash);
+    transition: all 0.3s;
+  }
+  .discipline-tag:hover {
+    background: var(--clay);
+    border-color: var(--clay);
+    color: var(--cream);
+  }
 
-      .contact p {
-        max-width: 42rem;
-      }
+  /* PORTFOLIO */
+  .portfolio {
+    padding: 120px 60px;
+    background: var(--cream);
+  }
 
-      .email {
-        display: inline-block;
-        margin-top: 24px;
-        font-family: Georgia, "Times New Roman", serif;
-        font-size: clamp(1.7rem, 5vw, 4rem);
-        letter-spacing: -0.04em;
-      }
+  .portfolio-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 70px;
+  }
 
-      footer {
-        padding: 28px 0 42px;
-        color: var(--muted);
-        font-size: 0.85rem;
-      }
+  .section-heading {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(3rem, 5vw, 4.5rem);
+    font-weight: 300;
+    color: var(--bark);
+    line-height: 1.0;
+  }
 
-      @media (max-width: 820px) {
-        header,
-        nav,
-        .contact {
-          align-items: flex-start;
-          flex-direction: column;
-        }
+  .view-all {
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--clay);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: gap 0.3s;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--clay);
+  }
+  .view-all:hover { gap: 24px; }
 
-        .hero,
-        .section-grid,
-        .work-grid {
-          grid-template-columns: 1fr;
-        }
+  .portfolio-filter {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 50px;
+    flex-wrap: wrap;
+  }
+  .filter-btn {
+    padding: 9px 22px;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    border: 1px solid var(--sand);
+    background: none;
+    color: var(--ash);
+    cursor: none;
+    transition: all 0.3s;
+  }
+  .filter-btn.active,
+  .filter-btn:hover {
+    background: var(--bark);
+    border-color: var(--bark);
+    color: var(--cream);
+  }
 
-        .hero {
-          padding-top: 32px;
-        }
+  .portfolio-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: auto;
+    gap: 16px;
+  }
 
-        .vessel-card {
-          min-height: 420px;
-          border-radius: 32px;
-        }
+  .work-item {
+    position: relative;
+    overflow: hidden;
+    cursor: none;
+  }
+  .work-item:nth-child(1) { grid-column: span 7; grid-row: span 1; }
+  .work-item:nth-child(2) { grid-column: span 5; grid-row: span 1; }
+  .work-item:nth-child(3) { grid-column: span 4; grid-row: span 1; }
+  .work-item:nth-child(4) { grid-column: span 5; grid-row: span 1; }
+  .work-item:nth-child(5) { grid-column: span 3; grid-row: span 1; }
 
-        section {
-          padding: 64px 0;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <div class="page">
-      <header aria-label="Site header">
-        <a class="brand" href="#top">Liana</a>
-        <nav aria-label="Primary navigation">
-          <a href="#about">About</a>
-          <a href="#work">Work</a>
-          <a href="#contact">Contact</a>
-        </nav>
-      </header>
+  .work-thumb {
+    width: 100%;
+    aspect-ratio: 4/3;
+    position: relative;
+    overflow: hidden;
+  }
 
-      <main id="top">
-        <section class="hero" aria-labelledby="hero-title">
-          <div>
-            <p class="eyebrow">Artist · Ceramist</p>
-            <h1 id="hero-title">Quiet forms in clay.</h1>
-            <p class="intro">
-              Liana creates hand-built ceramic objects and contemplative artworks shaped by texture,
-              balance, and the calm rhythm of the studio.
-            </p>
-            <div class="actions" aria-label="Portfolio actions">
-              <a class="button" href="#work">View work</a>
-              <a class="button" href="#contact">Commission</a>
-            </div>
-          </div>
+  .work-item:nth-child(1) .work-thumb { aspect-ratio: 16/9; }
+  .work-item:nth-child(2) .work-thumb { aspect-ratio: 3/4; }
+  .work-item:nth-child(3) .work-thumb { aspect-ratio: 1/1; }
+  .work-item:nth-child(4) .work-thumb { aspect-ratio: 4/3; }
+  .work-item:nth-child(5) .work-thumb { aspect-ratio: 2/3; }
 
-          <aside class="vessel-card" aria-label="Abstract clay vessel illustration">
-            <div class="vessel" role="img" aria-label="Minimal terracotta ceramic vessel"></div>
-            <div class="card-label">
-              <span>Stoneware</span>
-              <span>Handmade</span>
-            </div>
-          </aside>
-        </section>
+  .work-bg {
+    position: absolute;
+    inset: 0;
+    transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  .work-item:hover .work-bg { transform: scale(1.06); }
 
-        <section id="about" aria-labelledby="about-title">
-          <div class="section-grid">
-            <h2 id="about-title">About</h2>
-            <p class="section-copy">
-              Working between art object and functional piece, Liana's practice celebrates subtle
-              silhouettes, natural materials, and surfaces that invite touch. Each piece is made slowly,
-              allowing small irregularities to become part of its character.
-            </p>
-          </div>
-        </section>
+  .w1 { background: linear-gradient(135deg, #C4926A 0%, #8E5A36 40%, #3D2B1F 100%); }
+  .w2 { background: linear-gradient(160deg, #7A8C6E 0%, #4A5C42 60%, #2A3A22 100%); }
+  .w3 { background: linear-gradient(110deg, #D4C5B0 0%, #C4926A 50%, #8E5A36 100%); }
+  .w4 { background: linear-gradient(145deg, #8E7B6E 0%, #5A3A25 50%, #C4926A 100%); }
+  .w5 { background: linear-gradient(160deg, #EAE0D5 0%, #C4926A 70%, #3D2B1F 100%); }
 
-        <section id="work" aria-labelledby="work-title">
-          <div class="section-grid">
-            <h2 id="work-title">Selected work</h2>
-            <div class="work-grid">
-              <article class="work">
-                <h3>Vessels</h3>
-                <p>Minimal stoneware forms for shelves, tables, and quiet corners.</p>
-              </article>
-              <article class="work">
-                <h3>Objects</h3>
-                <p>Small sculptural pieces exploring weight, negative space, and balance.</p>
-              </article>
-              <article class="work">
-                <h3>Commissions</h3>
-                <p>Custom ceramic work for homes, interiors, and meaningful gifts.</p>
-              </article>
-            </div>
-          </div>
-        </section>
+  /* SVG artwork shapes on thumbnails */
+  .work-art {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.5;
+  }
 
-        <section id="contact" aria-labelledby="contact-title">
-          <div class="contact">
-            <div>
-              <h2 id="contact-title">Inquiries</h2>
-              <p class="section-copy">
-                For available pieces, collaborations, or commissioned work, get in touch with Liana.
-              </p>
-              <a class="email" href="mailto:liana@example.com">liana@example.com</a>
-            </div>
-            <a class="button" href="#top">Back to top</a>
-          </div>
-        </section>
-      </main>
+  .work-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(29,15,6,0.85) 0%, transparent 50%);
+    opacity: 0;
+    transition: opacity 0.4s;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 24px;
+  }
+  .work-item:hover .work-overlay { opacity: 1; }
 
-      <footer>
-        <span>© 2026 Liana. Artist & ceramist.</span>
-      </footer>
+  .work-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    color: var(--cream);
+    font-weight: 300;
+    transform: translateY(10px);
+    transition: transform 0.4s;
+  }
+  .work-item:hover .work-title { transform: translateY(0); }
+
+  .work-meta {
+    font-size: 0.6rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--clay);
+    margin-top: 6px;
+    transform: translateY(10px);
+    transition: transform 0.4s 0.05s;
+    opacity: 0;
+  }
+  .work-item:hover .work-meta { transform: translateY(0); opacity: 1; }
+
+  .work-num {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.5);
+    font-style: italic;
+  }
+
+  /* PROCESS */
+  .process {
+    padding: 120px 60px;
+    background: var(--bark);
+    color: var(--cream);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .process::before {
+    content: '';
+    position: absolute;
+    top: -100px;
+    right: -100px;
+    width: 500px;
+    height: 500px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(196,146,106,0.15) 0%, transparent 70%);
+  }
+
+  .process-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+    margin-top: 70px;
+  }
+
+  .process-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .process-step {
+    display: grid;
+    grid-template-columns: 60px 1fr;
+    gap: 24px;
+    padding: 28px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    transition: background 0.3s;
+    position: relative;
+  }
+
+  .step-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    color: var(--clay);
+    font-style: italic;
+    padding-top: 2px;
+  }
+
+  .step-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    font-weight: 300;
+    margin-bottom: 10px;
+    color: var(--cream);
+  }
+
+  .step-desc {
+    font-size: 0.82rem;
+    line-height: 1.8;
+    color: rgba(245,239,230,0.5);
+  }
+
+  .process-visual {
+    position: relative;
+  }
+
+  .process-img-stack {
+    position: relative;
+    height: 480px;
+  }
+
+  .stack-img {
+    position: absolute;
+    border: 3px solid transparent;
+    overflow: hidden;
+  }
+
+  .stack-img:nth-child(1) {
+    width: 65%;
+    aspect-ratio: 3/4;
+    top: 0;
+    left: 0;
+    background: linear-gradient(145deg, #8E7B6E, #4A3020);
+    border-color: rgba(196,146,106,0.3);
+  }
+  .stack-img:nth-child(2) {
+    width: 55%;
+    aspect-ratio: 1/1;
+    bottom: 0;
+    right: 0;
+    background: linear-gradient(145deg, #C4926A, #8E5A36);
+    border-color: rgba(196,146,106,0.3);
+  }
+
+  .stack-quote {
+    position: absolute;
+    bottom: 100px;
+    left: 55%;
+    transform: translateX(-50%);
+    background: var(--clay);
+    padding: 20px 24px;
+    width: 200px;
+    z-index: 3;
+  }
+  .stack-quote p {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    font-style: italic;
+    line-height: 1.4;
+    color: var(--cream);
+  }
+
+  /* EXHIBITIONS */
+  .exhibitions {
+    padding: 120px 60px;
+    background: var(--smoke);
+  }
+
+  .exhibit-list {
+    margin-top: 60px;
+    border-top: 1px solid var(--sand);
+  }
+
+  .exhibit-item {
+    display: grid;
+    grid-template-columns: 120px 1fr auto;
+    gap: 40px;
+    align-items: center;
+    padding: 28px 0;
+    border-bottom: 1px solid var(--sand);
+    transition: padding-left 0.3s;
+    cursor: none;
+  }
+  .exhibit-item:hover { padding-left: 16px; }
+
+  .exhibit-year {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    color: var(--clay);
+    font-style: italic;
+  }
+
+  .exhibit-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    font-weight: 300;
+    color: var(--bark);
+    margin-bottom: 4px;
+  }
+
+  .exhibit-venue {
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ash);
+  }
+
+  .exhibit-type {
+    padding: 6px 14px;
+    border: 1px solid var(--sand);
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ash);
+  }
+
+  /* CONTACT */
+  .contact {
+    padding: 120px 60px;
+    background: var(--cream);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 100px;
+    align-items: center;
+  }
+
+  .contact-heading {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(3rem, 5vw, 4.5rem);
+    font-weight: 300;
+    color: var(--bark);
+    line-height: 1.0;
+    margin-bottom: 30px;
+  }
+
+  .contact-heading em {
+    font-style: italic;
+    color: var(--clay);
+  }
+
+  .contact-info {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    margin-top: 40px;
+  }
+
+  .contact-row {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .contact-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--clay);
+  }
+
+  .contact-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    color: var(--bark);
+    text-decoration: none;
+  }
+  .contact-value:hover { color: var(--clay); }
+
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .form-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--ash);
+  }
+
+  .form-input,
+  .form-textarea {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--sand);
+    padding: 12px 0;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.9rem;
+    color: var(--bark);
+    outline: none;
+    transition: border-color 0.3s;
+    font-weight: 300;
+    cursor: none;
+  }
+  .form-input:focus,
+  .form-textarea:focus { border-color: var(--clay); }
+
+  .form-textarea { resize: none; height: 100px; }
+
+  .submit-btn {
+    align-self: flex-start;
+    padding: 16px 44px;
+    background: var(--bark);
+    color: var(--cream);
+    border: 1px solid var(--bark);
+    font-family: 'Jost', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    cursor: none;
+    transition: all 0.3s;
+  }
+  .submit-btn:hover {
+    background: var(--clay);
+    border-color: var(--clay);
+  }
+
+  /* FOOTER */
+  footer {
+    background: var(--ink);
+    padding: 50px 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    color: var(--cream);
+    letter-spacing: 0.2em;
+    font-weight: 300;
+  }
+
+  .footer-copy {
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    color: rgba(245,239,230,0.3);
+  }
+
+  .footer-social {
+    display: flex;
+    gap: 24px;
+  }
+  .footer-social a {
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: rgba(245,239,230,0.4);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  .footer-social a:hover { color: var(--clay); }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes scrollPulse {
+    0%,100% { opacity: 0.3; }
+    50% { opacity: 1; }
+  }
+
+  /* Intersection observer fade */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    nav { padding: 20px 24px; }
+    .hero { grid-template-columns: 1fr; }
+    .hero-right { height: 50vh; min-height: 300px; position: relative; }
+    .hero-left { padding: 100px 24px 60px; }
+    .year-badge { display: none; }
+    .about { grid-template-columns: 1fr; padding: 80px 24px; gap: 60px; }
+    .portfolio { padding: 80px 24px; }
+    .portfolio-grid { grid-template-columns: 1fr 1fr; }
+    .work-item:nth-child(n) { grid-column: span 1; }
+    .work-item:nth-child(1) { grid-column: span 2; }
+    .process { padding: 80px 24px; }
+    .process-grid { grid-template-columns: 1fr; }
+    .process-visual { display: none; }
+    .exhibitions { padding: 80px 24px; }
+    .exhibit-item { grid-template-columns: 80px 1fr; }
+    .exhibit-type { display: none; }
+    .contact { grid-template-columns: 1fr; padding: 80px 24px; gap: 60px; }
+    footer { flex-direction: column; gap: 20px; text-align: center; padding: 40px 24px; }
+    .nav-links { display: none; }
+    body { cursor: auto; }
+    .cursor, .cursor-ring { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Liana Khachatryan</div>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#portfolio">Works</a></li>
+    <li><a href="#process">Process</a></li>
+    <li><a href="#exhibitions">Exhibitions</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <p class="hero-eyebrow">Ceramics · Painting · Fine Arts</p>
+    <h1 class="hero-title">
+      Clay,<br>
+      <em>Canvas</em><br>
+      & Soul
+    </h1>
+    <p class="hero-sub">
+      Handcrafted works that exist at the intersection of earth and expression. Each piece a meditation — slow, deliberate, alive.
+    </p>
+    <a href="#portfolio" class="hero-cta">
+      Explore Works <span></span>
+    </a>
+    <div class="scroll-hint">
+      <div class="scroll-line"></div>
+      Scroll
     </div>
-  </body>
+  </div>
+
+  <div class="hero-right">
+    <div class="year-badge">
+      <span>12+</span>
+      <small>Years of craft</small>
+    </div>
+    <div class="hero-image-grid">
+      <div class="hero-img-main">
+        <!-- Ceramic vessel SVG -->
+        <svg class="ceramic-svg" viewBox="0 0 200 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="100" cy="50" rx="30" ry="8" fill="rgba(245,239,230,0.15)"/>
+          <path d="M70 50 Q40 120 50 200 Q60 260 100 268 Q140 260 150 200 Q160 120 130 50Z" fill="rgba(245,239,230,0.12)" stroke="rgba(245,239,230,0.3)" stroke-width="1.5"/>
+          <path d="M80 55 Q55 120 62 195 Q70 248 100 255 Q130 248 138 195 Q145 120 120 55Z" fill="rgba(245,239,230,0.08)"/>
+          <ellipse cx="100" cy="258" rx="38" ry="6" fill="rgba(0,0,0,0.2)"/>
+          <!-- Texture lines -->
+          <path d="M62 120 Q100 115 138 120" stroke="rgba(245,239,230,0.2)" stroke-width="0.8" fill="none"/>
+          <path d="M56 150 Q100 143 144 150" stroke="rgba(245,239,230,0.2)" stroke-width="0.8" fill="none"/>
+          <path d="M58 180 Q100 172 142 180" stroke="rgba(245,239,230,0.15)" stroke-width="0.8" fill="none"/>
+        </svg>
+      </div>
+      <div class="hero-img-row">
+        <div class="hero-img-sm">
+          <!-- Leaf/plant motif -->
+          <svg style="position:absolute;inset:0;width:100%;height:100%;opacity:0.3" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 80 Q50 20 80 30 Q60 70 20 80Z" fill="rgba(245,239,230,0.6)"/>
+            <path d="M20 80 Q50 60 80 30" stroke="rgba(245,239,230,0.4)" stroke-width="0.8" fill="none"/>
+          </svg>
+          <span class="img-label">Ceramics</span>
+        </div>
+        <div class="hero-img-sm">
+          <!-- Abstract circle motif -->
+          <svg style="position:absolute;inset:0;width:100%;height:100%;opacity:0.4" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="30" stroke="rgba(245,239,230,0.6)" stroke-width="1" fill="none"/>
+            <circle cx="50" cy="50" r="18" fill="rgba(245,239,230,0.2)"/>
+            <circle cx="50" cy="50" r="8" fill="rgba(245,239,230,0.3)"/>
+          </svg>
+          <span class="img-label">Paintings</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div class="about-image reveal">
+    <div class="about-portrait">
+      <!-- Portrait silhouette SVG -->
+      <svg class="portrait-figure" viewBox="0 0 160 260" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="80" cy="45" rx="28" ry="32" fill="rgba(245,239,230,0.15)"/>
+        <path d="M30 130 Q30 100 80 95 Q130 100 130 130 L140 260 L20 260 Z" fill="rgba(245,239,230,0.1)"/>
+        <path d="M55 80 Q55 110 80 115 Q105 110 105 80" stroke="rgba(245,239,230,0.2)" stroke-width="1" fill="none"/>
+      </svg>
+    </div>
+    <div class="about-accent"></div>
+    <div class="about-tag">
+      <strong>Liana</strong>
+      <small>Khachatryan · Artist</small>
+    </div>
+  </div>
+
+  <div class="about-content reveal">
+    <p class="section-label">The Artist</p>
+    <h2 class="about-heading">
+      Shaped by<br>
+      earth, moved<br>
+      by <em>color</em>
+    </h2>
+    <p class="about-text">
+      My practice lives in the tension between control and surrender. Working with clay teaches you to listen — to the material, to the moment, to the quiet resistance that becomes form.
+    </p>
+    <p class="about-text">
+      Trained in fine arts and drawn to ceramics, I create works that bridge the functional and the meditative. Each vessel, each canvas, carries the mark of its making.
+    </p>
+    <div class="disciplines">
+      <span class="discipline-tag">Wheel Throwing</span>
+      <span class="discipline-tag">Hand Building</span>
+      <span class="discipline-tag">Oil Painting</span>
+      <span class="discipline-tag">Watercolor</span>
+      <span class="discipline-tag">Raku Firing</span>
+      <span class="discipline-tag">Glaze Chemistry</span>
+    </div>
+  </div>
+</section>
+
+<!-- PORTFOLIO -->
+<section class="portfolio" id="portfolio">
+  <div class="portfolio-header reveal">
+    <div>
+      <p class="section-label">Selected Works</p>
+      <h2 class="section-heading">The<br><em style="font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--clay)">Collection</em></h2>
+    </div>
+    <a href="#" class="view-all">All Works →</a>
+  </div>
+
+  <div class="portfolio-filter reveal">
+    <button class="filter-btn active">All</button>
+    <button class="filter-btn">Ceramics</button>
+    <button class="filter-btn">Paintings</button>
+    <button class="filter-btn">Sculpture</button>
+    <button class="filter-btn">Installations</button>
+  </div>
+
+  <div class="portfolio-grid">
+    <div class="work-item reveal">
+      <div class="work-thumb">
+        <div class="work-bg w1">
+          <div class="work-art">
+            <svg width="60%" height="60%" viewBox="0 0 200 160" fill="none">
+              <ellipse cx="100" cy="80" rx="60" ry="50" stroke="rgba(245,239,230,0.3)" stroke-width="1.5"/>
+              <path d="M60 80 Q80 40 120 50 Q160 60 140 100 Q120 130 80 120 Z" fill="rgba(245,239,230,0.1)" stroke="rgba(245,239,230,0.25)" stroke-width="1"/>
+            </svg>
+          </div>
+        </div>
+        <div class="work-overlay">
+          <span class="work-num">01</span>
+          <h3 class="work-title">Vessel No. 14 — Earth Series</h3>
+          <p class="work-meta">Ceramics · 2024</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="work-item reveal">
+      <div class="work-thumb">
+        <div class="work-bg w2">
+          <div class="work-art">
+            <svg width="50%" height="50%" viewBox="0 0 100 130" fill="none">
+              <path d="M20 10 Q50 5 80 10 L90 120 Q50 128 10 120 Z" fill="rgba(245,239,230,0.12)" stroke="rgba(245,239,230,0.3)" stroke-width="1"/>
+              <line x1="35" y1="30" x2="35" y2="105" stroke="rgba(245,239,230,0.2)" stroke-width="0.8"/>
+              <line x1="50" y1="20" x2="50" y2="112" stroke="rgba(245,239,230,0.2)" stroke-width="0.8"/>
+              <line x1="65" y1="30" x2="65" y2="105" stroke="rgba(245,239,230,0.2)" stroke-width="0.8"/>
+            </svg>
+          </div>
+        </div>
+        <div class="work-overlay">
+          <span class="work-num">02</span>
+          <h3 class="work-title">Grove — Oil on Canvas</h3>
+          <p class="work-meta">Painting · 2024</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="work-item reveal">
+      <div class="work-thumb">
+        <div class="work-bg w3">
+          <div class="work-art">
+            <svg width="55%" height="55%" viewBox="0 0 100 100" fill="none">
+              <circle cx="50" cy="50" r="35" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+              <circle cx="50" cy="50" r="20" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+              <circle cx="50" cy="50" r="8" fill="rgba(255,255,255,0.2)"/>
+            </svg>
+          </div>
+        </div>
+        <div class="work-overlay">
+          <span class="work-num">03</span>
+          <h3 class="work-title">Raku Bowl — Smoke</h3>
+          <p class="work-meta">Ceramics · 2023</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="work-item reveal">
+      <div class="work-thumb">
+        <div class="work-bg w4">
+          <div class="work-art">
+            <svg width="60%" height="60%" viewBox="0 0 150 120" fill="none">
+              <path d="M20 100 Q75 10 130 100" stroke="rgba(245,239,230,0.3)" stroke-width="2" fill="none"/>
+              <path d="M40 90 Q75 30 110 90" fill="rgba(245,239,230,0.1)" stroke="rgba(245,239,230,0.2)" stroke-width="1"/>
+            </svg>
+          </div>
+        </div>
+        <div class="work-overlay">
+          <span class="work-num">04</span>
+          <h3 class="work-title">Undulation — Mixed Media</h3>
+          <p class="work-meta">Mixed · 2023</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="work-item reveal">
+      <div class="work-thumb">
+        <div class="work-bg w5">
+          <div class="work-art">
+            <svg width="55%" height="55%" viewBox="0 0 80 120" fill="none">
+              <path d="M40 10 Q60 40 50 80 Q40 110 40 110 Q40 110 30 80 Q20 40 40 10Z" fill="rgba(61,43,31,0.3)" stroke="rgba(61,43,31,0.5)" stroke-width="1.5"/>
+              <path d="M40 40 Q55 55 50 75" stroke="rgba(61,43,31,0.4)" stroke-width="1" fill="none"/>
+            </svg>
+          </div>
+        </div>
+        <div class="work-overlay">
+          <span class="work-num">05</span>
+          <h3 class="work-title">Leaf Vessel — Stoneware</h3>
+          <p class="work-meta">Ceramics · 2023</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="process" id="process">
+  <div class="reveal">
+    <p class="section-label" style="color:var(--clay)">The Practice</p>
+    <h2 class="section-heading" style="color:var(--cream)">How a work<br><em style="font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--clay)">comes alive</em></h2>
+  </div>
+
+  <div class="process-grid">
+    <div class="process-steps reveal">
+      <div class="process-step">
+        <span class="step-num">01</span>
+        <div>
+          <h3 class="step-title">Listening</h3>
+          <p class="step-desc">Every piece begins with observation — of light, texture, nature, memory. I keep sketchbooks full of gestures and impressions before a single gram of clay is touched.</p>
+        </div>
+      </div>
+      <div class="process-step">
+        <span class="step-num">02</span>
+        <div>
+          <h3 class="step-title">Shaping</h3>
+          <p class="step-desc">Whether on the wheel or hand-built, the forming stage is where the dialogue begins. Clay remembers every touch, every hesitation, every decision made or abandoned.</p>
+        </div>
+      </div>
+      <div class="process-step">
+        <span class="step-num">03</span>
+        <div>
+          <h3 class="step-title">Firing & Finishing</h3>
+          <p class="step-desc">The kiln has the final word. I work with wood ash, raku, and reduction atmospheres — processes that require surrender as much as skill. The fire collaborates.</p>
+        </div>
+      </div>
+      <div class="process-step">
+        <span class="step-num">04</span>
+        <div>
+          <h3 class="step-title">Color & Surface</h3>
+          <p class="step-desc">In painting, I layer transparencies, building depth that shifts with light. The surface is never passive — it holds conversation across time.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="process-visual reveal">
+      <div class="process-img-stack">
+        <div class="stack-img">
+          <svg viewBox="0 0 150 200" fill="none" style="width:100%;height:100%" xmlns="http://www.w3.org/2000/svg">
+            <rect width="150" height="200" fill="url(#g1)"/>
+            <defs>
+              <linearGradient id="g1" x1="0" y1="0" x2="150" y2="200" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#8E7B6E"/>
+                <stop offset="100%" stop-color="#4A3020"/>
+              </linearGradient>
+            </defs>
+            <path d="M75 40 Q90 80 80 160 Q75 180 75 185 Q75 180 70 160 Q60 80 75 40Z" fill="rgba(245,239,230,0.15)" stroke="rgba(245,239,230,0.3)" stroke-width="1.2"/>
+          </svg>
+        </div>
+        <div class="stack-img">
+          <svg viewBox="0 0 140 140" fill="none" style="width:100%;height:100%" xmlns="http://www.w3.org/2000/svg">
+            <rect width="140" height="140" fill="url(#g2)"/>
+            <defs>
+              <linearGradient id="g2" x1="0" y1="0" x2="140" y2="140" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#C4926A"/>
+                <stop offset="100%" stop-color="#8E5A36"/>
+              </linearGradient>
+            </defs>
+            <circle cx="70" cy="70" r="35" stroke="rgba(245,239,230,0.3)" stroke-width="1.5" fill="rgba(245,239,230,0.08)"/>
+          </svg>
+        </div>
+        <div class="stack-quote">
+          <p>"The clay knows things my hands are still learning."</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXHIBITIONS -->
+<section class="exhibitions" id="exhibitions">
+  <div class="reveal">
+    <p class="section-label">Exhibition History</p>
+    <h2 class="section-heading">Shows &<br><em style="font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--clay)">Recognition</em></h2>
+  </div>
+
+  <div class="exhibit-list reveal">
+    <div class="exhibit-item">
+      <span class="exhibit-year">2024</span>
+      <div>
+        <p class="exhibit-name">Earth, Form & Silence</p>
+        <p class="exhibit-venue">The Clay Studio · Philadelphia, PA</p>
+      </div>
+      <span class="exhibit-type">Solo</span>
+    </div>
+    <div class="exhibit-item">
+      <span class="exhibit-year">2024</span>
+      <div>
+        <p class="exhibit-name">Material Conversations</p>
+        <p class="exhibit-venue">Craft Contemporary · Los Angeles, CA</p>
+      </div>
+      <span class="exhibit-type">Group</span>
+    </div>
+    <div class="exhibit-item">
+      <span class="exhibit-year">2023</span>
+      <div>
+        <p class="exhibit-name">New American Ceramics Invitational</p>
+        <p class="exhibit-venue">American Craft Council · Minneapolis, MN</p>
+      </div>
+      <span class="exhibit-type">Invitational</span>
+    </div>
+    <div class="exhibit-item">
+      <span class="exhibit-year">2023</span>
+      <div>
+        <p class="exhibit-name">Threshold — Paintings on Clay</p>
+        <p class="exhibit-venue">Sasha Wolf Projects · New York, NY</p>
+      </div>
+      <span class="exhibit-type">Solo</span>
+    </div>
+    <div class="exhibit-item">
+      <span class="exhibit-year">2022</span>
+      <div>
+        <p class="exhibit-name">Surface Tensions</p>
+        <p class="exhibit-venue">Museum of Arts and Crafts · Hamburg, Germany</p>
+      </div>
+      <span class="exhibit-type">International</span>
+    </div>
+    <div class="exhibit-item">
+      <span class="exhibit-year">2021</span>
+      <div>
+        <p class="exhibit-name">Fire + Water — Raku Works</p>
+        <p class="exhibit-venue">Santa Fe Clay · Santa Fe, NM</p>
+      </div>
+      <span class="exhibit-type">Solo</span>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact" id="contact">
+  <div class="reveal">
+    <p class="section-label">Get In Touch</p>
+    <h2 class="contact-heading">
+      Let's create<br>
+      something<br>
+      <em>together</em>
+    </h2>
+    <p style="font-size:0.85rem;line-height:1.9;color:var(--ash);max-width:340px;margin-top:20px;">
+      Available for commissions, exhibitions, collaborations, and workshops. Each inquiry is read personally and with care.
+    </p>
+    <div class="contact-info">
+      <div class="contact-row">
+        <span class="contact-label">Email</span>
+        <a id="contact-email" href="#" class="contact-value"></a>
+      </div>
+      <div class="contact-row">
+        <span class="contact-label">Studio</span>
+        <span class="contact-value">Brooklyn, New York</span>
+      </div>
+      <div class="contact-row">
+        <span class="contact-label">Instagram</span>
+        <a href="https://instagram.com/liana11khachatryan" target="_blank" rel="noopener" class="contact-value">@liana11khachatryan</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="contact-form reveal">
+    <div class="form-group">
+      <label class="form-label">Your Name</label>
+      <input class="form-input" type="text" placeholder="First & last name">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Email Address</label>
+      <input class="form-input" type="email" placeholder="you@example.com">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Subject</label>
+      <input class="form-input" type="text" placeholder="Commission / Exhibition / Other">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Message</label>
+      <textarea class="form-textarea" placeholder="Tell me about your project..."></textarea>
+    </div>
+    <button class="submit-btn">Send Message</button>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Liana Khachatryan</div>
+  <p class="footer-copy">© 2026 Liana Khachatryan. All rights reserved.</p>
+  <div class="footer-social">
+    <a href="https://instagram.com/liana11khachatryan" target="_blank" rel="noopener">Instagram</a>
+  </div>
+</footer>
+
+<script>
+  // Obfuscated email — assembled at runtime to avoid scraper harvesting
+  (function() {
+    const u = 'liana11khachatryan', d = 'gmail.com';
+    const el = document.getElementById('contact-email');
+    el.href = 'mailto:' + u + '@' + d;
+    el.textContent = u + '@' + d;
+  })();
+
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx + 'px';
+    cursor.style.top = my + 'px';
+  });
+
+  (function animRing() {
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
+    requestAnimationFrame(animRing);
+  })();
+
+  document.querySelectorAll('a, button, .work-item, .exhibit-item').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.transform = 'translate(-50%,-50%) scale(2.5)';
+      ring.style.transform = 'translate(-50%,-50%) scale(1.5)';
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.style.transform = 'translate(-50%,-50%) scale(1)';
+      ring.style.transform = 'translate(-50%,-50%) scale(1)';
+    });
+  });
+
+  // Reveal on scroll
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.12 });
+  reveals.forEach(r => observer.observe(r));
+
+  // Portfolio filter
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
+
+  // Stagger reveal children in grid
+  document.querySelectorAll('.portfolio-grid .work-item').forEach((item, i) => {
+    item.style.transitionDelay = (i * 0.08) + 's';
+  });
+  document.querySelectorAll('.exhibit-item').forEach((item, i) => {
+    item.style.transitionDelay = (i * 0.06) + 's';
+  });
+</script>
+</body>
 </html>
