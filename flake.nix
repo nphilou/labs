@@ -21,6 +21,18 @@
           runHook postInstall
         '';
       };
+      helloStefan = pkgs.stdenvNoCC.mkDerivation {
+        pname = "labs-hello-stefan";
+        version = "0.1.0";
+        src = ./apps/hello-stefan;
+
+        installPhase = ''
+          runHook preInstall
+          mkdir -p $out
+          cp -r . $out/
+          runHook postInstall
+        '';
+      };
       liana = pkgs.stdenvNoCC.mkDerivation {
         pname = "labs-liana";
         version = "0.1.0";
@@ -41,6 +53,7 @@
     {
       packages.${system} = {
         hello = hello;
+        hello-stefan = helloStefan;
         liana = liana;
         send-deploy-email = sendDeployEmail;
         default = hello;
