@@ -15,6 +15,7 @@ in
   imports = [
     ./apps/apartment-tracker.nix
     ./apps/hello.nix
+    ./apps/hello-stefan.nix
     ./apps/streamlit-basic.nix
     ./apps/buyvsrent.nix
     ./apps/liana.nix
