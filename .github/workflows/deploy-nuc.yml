@@ -18,9 +18,7 @@ jobs:
     runs-on: [self-hosted, nuc, nixos]
     steps:
       - name: Checkout nixos-config
-        run: |
-          rm -rf nixos-config
-          git clone git@github-nixos-config:nphilou/nixos-config.git
+        run: git clone git@github-nixos-config:nphilou/nixos-config.git
 
       - name: Update labs flake input
         working-directory: nixos-config

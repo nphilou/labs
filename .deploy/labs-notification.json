@@ -1,5 +1,5 @@
 {
-  "service": "hello-stefan",
-  "url": "https://app.nphilou.ch/hello-stefan",
-  "summary": "Added a new hello-stefan demo website that greets Stefan."
+  "service": "vibe_landing_page",
+  "url": "https://app.nphilou.ch/vibe_landing_page",
+  "summary": "Removed the vibe_landing_page labs app and its public route from the NixOS labs configuration."
 }
