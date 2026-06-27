@@ -1,74 +1,40 @@
-name: Deploy NUC
+name: Deploy to NUC
 
+# On every push to main, bump the labs flake input in nixos-config and
+# rebuild the NUC. Runs on the NUC self-hosted runner so git operations
+# use the runner's ambient SSH key — no PAT required.
 on:
   workflow_dispatch:
   push:
     branches:
       - main
 
+concurrency:
+  group: deploy-nuc
+  cancel-in-progress: false
+
 jobs:
-  trigger-nixos-config:
-    name: Trigger nixos-config deploy
-    runs-on: ubuntu-latest
+  deploy:
+    runs-on: [self-hosted, nuc, nixos]
     steps:
-      - uses: actions/checkout@v6
-
-      - name: Read labs notification metadata
-        id: notification
+      - name: Checkout nixos-config
         run: |
-          metadata=".deploy/labs-notification.json"
+          rm -rf nixos-config
+          git clone git@github-nixos-config:nphilou/nixos-config.git
 
-          echo "service=$(jq -r .service "$metadata")" >> "$GITHUB_OUTPUT"
-          echo "url=$(jq -r .url "$metadata")" >> "$GITHUB_OUTPUT"
-          {
-            echo "summary<<EOF"
-            jq -r .summary "$metadata"
-            echo "EOF"
-          } >> "$GITHUB_OUTPUT"
+      - name: Update labs flake input
+        working-directory: nixos-config
+        run: nix flake update labs
 
-      - name: Dispatch deploy workflow
-        id: deploy
-        env:
-          GH_TOKEN: ${{ secrets.NIXOS_CONFIG_DISPATCH_TOKEN }}
+      - name: Commit and push
+        working-directory: nixos-config
         run: |
-          output="$(gh workflow run deploy.yml \
-            --repo nphilou/nixos-config \
-            --ref master \
-            -f flake_update=labs)"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add flake.lock
+          git diff --cached --quiet || git commit -m "chore: bump labs flake input (nuc deploy)"
+          git push git@github-nixos-config:nphilou/nixos-config.git master
 
-          printf '%s\n' "$output"
-
-          run_id="$(printf '%s\n' "$output" | sed -n 's#.*/actions/runs/\([0-9][0-9]*\).*#\1#p' | head -n1)"
-          if [ -z "$run_id" ]; then
-            echo "Could not find dispatched nixos-config deploy run ID." >&2
-            exit 1
-          fi
-
-          echo "run_id=${run_id}" >> "$GITHUB_OUTPUT"
-
-      - name: Wait for deploy
-        env:
-          GH_TOKEN: ${{ secrets.NIXOS_CONFIG_DISPATCH_TOKEN }}
-          RUN_ID: ${{ steps.deploy.outputs.run_id }}
-        run: gh run watch "$RUN_ID" --repo nphilou/nixos-config --exit-status
-
-      - name: Notify Telegram
-        if: ${{ success() }}
-        env:
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-          SERVICE: ${{ steps.notification.outputs.service }}
-          SUMMARY: ${{ steps.notification.outputs.summary }}
-          URL: ${{ steps.notification.outputs.url }}
-          COMMIT_URL: ${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}
-        run: |
-          text="Labs deploy finished
-
-          Service: ${SERVICE}
-          Summary: ${SUMMARY}
-          Open: ${URL}
-          Changes: ${COMMIT_URL}"
-
-          curl -sS "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
-            -d chat_id="${TELEGRAM_CHAT_ID}" \
-            --data-urlencode text="${text}"
+      - name: Rebuild NUC
+        working-directory: nixos-config
+        run: /run/wrappers/bin/sudo /run/current-system/sw/bin/nixos-rebuild switch --option sandbox false --flake .#nuc
