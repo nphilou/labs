@@ -36,3 +36,14 @@ jobs:
       - name: Rebuild NUC
         working-directory: nixos-config
         run: /run/wrappers/bin/sudo /run/current-system/sw/bin/nixos-rebuild switch --option sandbox false --flake .#nuc
+
+      - name: Notify Telegram
+        if: success()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          curl -sS "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            -d chat_id="${TELEGRAM_CHAT_ID}" \
+            --data-urlencode text="Labs deployed to NUC
+          Commit: ${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}"
