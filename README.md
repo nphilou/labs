@@ -62,6 +62,27 @@ This sends a message with link: `https://app.nphilou.ch/hello`.
 - `streamlit-basic`: Streamlit demo at `https://app.nphilou.ch/streamlit-basic`
 - `buyvsrent`: Vaud buy-vs-rent Streamlit simulator at `https://app.nphilou.ch/buyvsrent`
 - `liana`: minimalist artist and ceramist portfolio at `https://app.nphilou.ch/liana`
+- `tgtg`: Too Good To Go API browser at `https://app.nphilou.ch/tgtg`
+
+## Too Good To Go monitor
+
+The `tgtg` app also includes a systemd timer that checks Cote Sushi item
+`1198174` every 20 minutes with a small randomized delay. It sends a Telegram
+message when at least 3 paniers are available and the price is below 11 CHF.
+
+Create `/var/lib/labs/secrets/tgtg-monitor.env` on the server:
+
+```bash
+sudo install -d -m 700 /var/lib/labs/secrets
+sudo tee /var/lib/labs/secrets/tgtg-monitor.env >/dev/null <<'EOF'
+TGTG_ACCESS_TOKEN=...
+TGTG_REFRESH_TOKEN=...
+TGTG_COOKIE=...
+TELEGRAM_BOT_TOKEN=...
+TELEGRAM_CHAT_ID=...
+EOF
+sudo chmod 600 /var/lib/labs/secrets/tgtg-monitor.env
+```
 
 ## Service ports
 

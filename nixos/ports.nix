@@ -5,4 +5,5 @@
   buyvsrent = 9103;
   liana = 9104;
   apartment-tracker = 9105;
+  tgtg = 9107;
 }

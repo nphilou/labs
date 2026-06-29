@@ -19,6 +19,7 @@ in
     ./apps/streamlit-basic.nix
     ./apps/buyvsrent.nix
     ./apps/liana.nix
+    ./apps/tgtg.nix
   ];
 
   options.nphilou.labs = {

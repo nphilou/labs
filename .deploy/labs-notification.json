@@ -1,5 +1,5 @@
 {
-  "service": "vibe_landing_page",
-  "url": "https://app.nphilou.ch/vibe_landing_page",
-  "summary": "Removed the vibe_landing_page labs app and its public route from the NixOS labs configuration."
+  "service": "tgtg",
+  "url": "https://app.nphilou.ch/tgtg",
+  "summary": "Added a Streamlit Too Good To Go API browser and a Telegram monitor for Cote Sushi availability under 11 CHF."
 }

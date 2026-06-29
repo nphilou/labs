@@ -2,3 +2,5 @@
 .idea/
 
 .DS_Store
+__pycache__/
+apps/tgtg/.streamlit/secrets.toml
