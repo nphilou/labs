@@ -3,7 +3,7 @@ name: Deploy to NUC
 # On every push to main, bump the labs flake input in nixos-config and
 # rebuild the NUC. Runs on the NUC self-hosted runner so git operations
 # use the runner's ambient SSH key — no PAT required.
-on:
+"on":
   workflow_dispatch:
   push:
     branches:
@@ -62,11 +62,14 @@ jobs:
           url=$(json_value url)
           summary=$(json_value summary)
 
-          message="Labs deployed to NUC
-Service: ${service}
-URL: ${url}
-Summary: ${summary}
-Commit: ${COMMIT_URL}"
+          message=$(cat <<EOF
+          Labs deployed to NUC
+          Service: ${service}
+          URL: ${url}
+          Summary: ${summary}
+          Commit: ${COMMIT_URL}
+          EOF
+          )
           curl -sS --fail "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
             -d chat_id="${TELEGRAM_CHAT_ID}" \
             --data-urlencode text="$message"
