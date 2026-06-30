@@ -53,7 +53,20 @@ jobs:
           COMMIT_URL: ${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}
         run: |
           set -euo pipefail
-          message=$(python -c 'import json, os; n=json.load(open("labs/.deploy/labs-notification.json", encoding="utf-8")); n["commit"]=os.environ["COMMIT_URL"]; print("Labs deployed to NUC\nService: {service}\nURL: {url}\nSummary: {summary}\nCommit: {commit}".format(**n))')
+          notification="labs/.deploy/labs-notification.json"
+          json_value() {
+            sed -n "s/^[[:space:]]*\"$1\"[[:space:]]*:[[:space:]]*\"\(.*\)\"[,[:space:]]*$/\1/p" "$notification"
+          }
+
+          service=$(json_value service)
+          url=$(json_value url)
+          summary=$(json_value summary)
+
+          message="Labs deployed to NUC
+Service: ${service}
+URL: ${url}
+Summary: ${summary}
+Commit: ${COMMIT_URL}"
           curl -sS --fail "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
             -d chat_id="${TELEGRAM_CHAT_ID}" \
             --data-urlencode text="$message"
