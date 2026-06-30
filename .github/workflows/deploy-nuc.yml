@@ -3,7 +3,7 @@ name: Deploy to NUC
 # On every push to main, bump the labs flake input in nixos-config and
 # rebuild the NUC. Runs on the NUC self-hosted runner so git operations
 # use the runner's ambient SSH key — no PAT required.
-"on":
+on:
   workflow_dispatch:
   push:
     branches:
