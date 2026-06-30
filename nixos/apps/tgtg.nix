@@ -3,10 +3,7 @@
 let
   cfg = config.nphilou.labs;
   port = (import ../ports.nix).tgtg;
-  monitor = pkgs.writers.writePython3Bin "labs-tgtg-monitor" {
-    libraries = with pkgs.python3Packages; [ tgtg ];
-    flakeIgnore = [ "E501" ];
-  } (builtins.readFile ../../apps/tgtg/monitor.py);
+  python = pkgs.python3.withPackages (ps: with ps; [ streamlit pandas ]);
 in
 {
   config = lib.mkIf cfg.enable {
@@ -24,7 +21,7 @@ in
         DynamicUser = true;
         WorkingDirectory = ../../apps/tgtg;
         ExecStart = ''
-          ${pkgs.python3.withPackages (ps: with ps; [ streamlit pandas tgtg ])}/bin/streamlit run app.py \
+          ${python}/bin/streamlit run app.py \
             --server.port ${toString port} \
             --server.address 127.0.0.1 \
             --server.headless true
@@ -62,7 +59,8 @@ in
         DynamicUser = true;
         StateDirectory = "labs-tgtg-monitor";
         EnvironmentFile = "-/var/lib/labs/secrets/tgtg-monitor.env";
-        ExecStart = lib.getExe monitor;
+        WorkingDirectory = ../../apps/tgtg;
+        ExecStart = "${pkgs.python3}/bin/python monitor.py";
       };
     };
 

@@ -18,7 +18,10 @@ jobs:
     runs-on: [self-hosted, nuc, nixos]
     steps:
       - name: Checkout nixos-config
-        run: git clone git@github-nixos-config:nphilou/nixos-config.git
+        run: |
+          set -euo pipefail
+          rm -rf nixos-config
+          git clone git@github-nixos-config:nphilou/nixos-config.git nixos-config
 
       - name: Update labs flake input
         working-directory: nixos-config
@@ -37,13 +40,23 @@ jobs:
         working-directory: nixos-config
         run: /run/wrappers/bin/sudo /run/current-system/sw/bin/nixos-rebuild switch --option sandbox false --flake .#nuc
 
+      - name: Checkout labs notification
+        uses: actions/checkout@v4
+        with:
+          path: labs
+
+      - name: Validate labs notification
+        run: python -m json.tool labs/.deploy/labs-notification.json >/dev/null
+
       - name: Notify Telegram
         if: success()
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          COMMIT_URL: ${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}
         run: |
-          curl -sS "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+          set -euo pipefail
+          message=$(python -c 'import json, os; n=json.load(open("labs/.deploy/labs-notification.json", encoding="utf-8")); n["commit"]=os.environ["COMMIT_URL"]; print("Labs deployed to NUC\nService: {service}\nURL: {url}\nSummary: {summary}\nCommit: {commit}".format(**n))')
+          curl -sS --fail "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
             -d chat_id="${TELEGRAM_CHAT_ID}" \
-            --data-urlencode text="Labs deployed to NUC
-          Commit: ${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}"
+            --data-urlencode text="$message"
