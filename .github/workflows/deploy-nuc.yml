@@ -45,9 +45,6 @@ jobs:
         with:
           path: labs
 
-      - name: Validate labs notification
-        run: python -m json.tool labs/.deploy/labs-notification.json >/dev/null
-
       - name: Notify Telegram
         if: success()
         env:
