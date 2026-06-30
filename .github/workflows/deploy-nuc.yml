@@ -23,19 +23,6 @@ jobs:
           rm -rf nixos-config
           git clone git@github-nixos-config:nphilou/nixos-config.git nixos-config
 
-      - name: Read labs notification metadata
-        id: notification
-        run: |
-          metadata=".deploy/labs-notification.json"
-
-          echo "service=$(jq -r .service "$metadata")" >> "$GITHUB_OUTPUT"
-          echo "url=$(jq -r .url "$metadata")" >> "$GITHUB_OUTPUT"
-          {
-            echo "summary<<EOF"
-            jq -r .summary "$metadata"
-            echo "EOF"
-          } >> "$GITHUB_OUTPUT"
-
       - name: Update labs flake input
         working-directory: nixos-config
         run: nix flake update labs
@@ -57,6 +44,16 @@ jobs:
         uses: actions/checkout@v4
         with:
           path: labs
+
+      - name: Read labs notification metadata
+        id: notification
+        working-directory: labs
+        run: |
+          jq -r '
+            "service=\(.service)",
+            "url=\(.url)",
+            "summary<<EOF\n\(.summary)\nEOF"
+          ' .deploy/labs-notification.json >> "$GITHUB_OUTPUT"
 
       - name: Notify Telegram
         if: ${{ success() }}
