@@ -23,6 +23,19 @@ jobs:
           rm -rf nixos-config
           git clone git@github-nixos-config:nphilou/nixos-config.git nixos-config
 
+      - name: Read labs notification metadata
+        id: notification
+        run: |
+          metadata=".deploy/labs-notification.json"
+
+          echo "service=$(jq -r .service "$metadata")" >> "$GITHUB_OUTPUT"
+          echo "url=$(jq -r .url "$metadata")" >> "$GITHUB_OUTPUT"
+          {
+            echo "summary<<EOF"
+            jq -r .summary "$metadata"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
       - name: Update labs flake input
         working-directory: nixos-config
         run: nix flake update labs
@@ -46,30 +59,22 @@ jobs:
           path: labs
 
       - name: Notify Telegram
-        if: success()
+        if: ${{ success() }}
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          SERVICE: ${{ steps.notification.outputs.service }}
+          SUMMARY: ${{ steps.notification.outputs.summary }}
+          URL: ${{ steps.notification.outputs.url }}
           COMMIT_URL: ${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}
         run: |
-          set -euo pipefail
-          notification="labs/.deploy/labs-notification.json"
-          json_value() {
-            sed -n "s/^[[:space:]]*\"$1\"[[:space:]]*:[[:space:]]*\"\(.*\)\"[,[:space:]]*$/\1/p" "$notification"
-          }
+          text="Labs deploy finished
 
-          service=$(json_value service)
-          url=$(json_value url)
-          summary=$(json_value summary)
+          Service: ${SERVICE}
+          Summary: ${SUMMARY}
+          Open: ${URL}
+          Changes: ${COMMIT_URL}"
 
-          message=$(cat <<EOF
-          Labs deployed to NUC
-          Service: ${service}
-          URL: ${url}
-          Summary: ${summary}
-          Commit: ${COMMIT_URL}
-          EOF
-          )
-          /run/current-system/sw/bin/curl -sS --fail "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+          curl -sS "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
             -d chat_id="${TELEGRAM_CHAT_ID}" \
-            --data-urlencode text="$message"
+            --data-urlencode text="${text}"
