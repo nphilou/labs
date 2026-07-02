@@ -2,11 +2,13 @@ import json
 import urllib.error
 import urllib.request
 from dataclasses import dataclass
+from http import HTTPStatus
 from typing import Any
 
 API_BASE_URL = "https://apptoogoodtogo.com/api"
 AUTH_BY_EMAIL_ENDPOINT = "/auth/v5/authByEmail"
 AUTH_POLL_ENDPOINT = "/auth/v5/authByRequestPollingId"
+REFRESH_ENDPOINT = "/token/v1/refresh"
 ITEM_ENDPOINT = "/item/v8/{item_id}"
 ITEMS_ENDPOINT = "/item/v8/"
 
@@ -15,6 +17,7 @@ ITEMS_ENDPOINT = "/item/v8/"
 class Response:
     status_code: int
     content: bytes
+    headers: dict[str, str]
 
     def json(self) -> Any:
         if not self.content:
@@ -58,15 +61,49 @@ class TgtgClient:
         request = urllib.request.Request(url, data=data, headers=self._headers(), method="POST")
         try:
             with urllib.request.urlopen(request, timeout=30) as response:
-                return Response(response.status, response.read())
+                return Response(response.status, response.read(), dict(response.headers))
         except urllib.error.HTTPError as exc:
-            return Response(exc.code, exc.read())
+            return Response(exc.code, exc.read(), dict(exc.headers))
 
-    def _post_json(self, endpoint: str, payload: dict[str, Any]) -> Any:
+    def _post_json(self, endpoint: str, payload: dict[str, Any], retry_auth: bool = True) -> Any:
         response = self._post(self._get_url(endpoint), json=payload)
+        if (
+            response.status_code == HTTPStatus.UNAUTHORIZED
+            and retry_auth
+            and endpoint != REFRESH_ENDPOINT
+            and self.refresh_token
+        ):
+            self.refresh_tokens()
+            response = self._post(self._get_url(endpoint), json=payload)
         if response.status_code >= 400:
             raise RuntimeError(f"Too Good To Go API request failed: {response.status_code} {response.content!r}")
         return response.json()
+
+    def credentials(self) -> dict[str, str]:
+        return {
+            "access_token": self.access_token or "",
+            "refresh_token": self.refresh_token or "",
+            "cookie": self.cookie or "",
+        }
+
+    def refresh_tokens(self) -> dict[str, str]:
+        if not self.refresh_token:
+            raise RuntimeError("TGTG_REFRESH_TOKEN is required to refresh credentials")
+
+        response = self._post(
+            self._get_url(REFRESH_ENDPOINT),
+            json={"refresh_token": self.refresh_token},
+        )
+        if response.status_code >= 400:
+            raise RuntimeError(
+                f"Too Good To Go token refresh failed: {response.status_code} {response.content!r}"
+            )
+
+        payload = response.json()
+        self.access_token = payload["access_token"]
+        self.refresh_token = payload["refresh_token"]
+        self.cookie = response.headers.get("Set-Cookie", self.cookie)
+        return self.credentials()
 
     def _auth_by_pin(self, polling_id: str, pin: str) -> None:
         payload = self._post_json(

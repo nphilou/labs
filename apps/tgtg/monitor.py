@@ -48,6 +48,15 @@ def save_state(path: Path, state: dict[str, Any]) -> None:
     path.write_text(json.dumps(state, indent=2, sort_keys=True))
 
 
+def credential(state: dict[str, Any], key: str, env_name: str) -> str:
+    state_credentials = state.get("credentials")
+    if isinstance(state_credentials, dict):
+        value = str(state_credentials.get(key, "")).strip()
+        if value:
+            return value
+    return required_env(env_name)
+
+
 def send_telegram(message: str) -> None:
     if os.environ.get("TGTG_MONITOR_DRY_RUN") == "1":
         print(message)
@@ -79,13 +88,16 @@ def main() -> int:
     state_path = Path(
         os.environ.get("TGTG_MONITOR_STATE", "/var/lib/labs-tgtg-monitor/state.json")
     )
+    state = load_state(state_path)
 
     client = TgtgClient(
-        access_token=required_env("TGTG_ACCESS_TOKEN"),
-        refresh_token=required_env("TGTG_REFRESH_TOKEN"),
-        cookie=required_env("TGTG_COOKIE"),
+        access_token=credential(state, "access_token", "TGTG_ACCESS_TOKEN"),
+        refresh_token=credential(state, "refresh_token", "TGTG_REFRESH_TOKEN"),
+        cookie=credential(state, "cookie", "TGTG_COOKIE"),
     )
     result = client.get_item(item_id=item_id)
+    state["credentials"] = client.credentials()
+
     item = result.get("item") or {}
     store = result.get("store") or {}
     pickup = result.get("pickup_interval") or {}
@@ -101,7 +113,6 @@ def main() -> int:
         and currency == "CHF"
         and price < max_price_chf
     )
-    state = load_state(state_path)
     alert_key = f"{item_id}:{available}:{price}:{pickup.get('start')}:{pickup.get('end')}"
 
     if qualifies and state.get("last_alert_key") != alert_key:

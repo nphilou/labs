@@ -58,6 +58,7 @@ in
         Type = "oneshot";
         DynamicUser = true;
         StateDirectory = "labs-tgtg-monitor";
+        StateDirectoryMode = "0700";
         EnvironmentFile = "-/var/lib/labs/secrets/tgtg-monitor.env";
         WorkingDirectory = ../../apps/tgtg;
         ExecStart = "${pkgs.python3}/bin/python monitor.py";

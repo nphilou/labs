@@ -41,6 +41,10 @@ def make_client(credentials: dict[str, str]) -> TgtgClient:
     )
 
 
+def sync_credentials(client: TgtgClient) -> None:
+    st.session_state["credentials"] = client.credentials()
+
+
 def request_login_pin(email: str) -> str:
     client = TgtgClient(email=email)
     response = client._post(
@@ -267,6 +271,7 @@ if st.button("Load items", type="primary"):
                     radius=radius,
                     page_size=100,
                 )
+            sync_credentials(client)
         st.success(f"Loaded {len(st.session_state['items'])} items.")
     except Exception as exc:
         show_exception("Could not load items.", exc)
@@ -300,6 +305,7 @@ if items:
         if st.button("Load item details"):
             try:
                 st.session_state["last_item"] = client.get_item(item_id=item_options[selected_label])
+                sync_credentials(client)
             except Exception as exc:
                 show_exception("Could not load item details.", exc)
 
