@@ -1,5 +1,5 @@
 {
-  "service": "tgtg",
-  "url": "https://app.nphilou.ch/tgtg",
-  "summary": "Fixed the Too Good To Go monitor by refreshing expired API tokens and persisting rotated credentials for future timer runs."
+  "service": "apartment-tracker",
+  "url": "https://app.nphilou.ch/apartment-tracker",
+  "summary": "Added a calculated price per square meter column to the apartment tracker table."
 }

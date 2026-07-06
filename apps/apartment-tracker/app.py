@@ -265,6 +265,16 @@ else:
 
     status_filter = st.multiselect("Status filter", STATUSES, default=STATUSES)
     visible = df[df["status"].isin(status_filter)].copy()
+    price_per_m2 = (visible["price_chf"] / visible["size_m2"]).where(
+        visible["price_chf"].notna()
+        & visible["size_m2"].notna()
+        & (visible["size_m2"] > 0)
+    )
+    visible.insert(
+        visible.columns.get_loc("size_m2") + 1,
+        "price_per_m2",
+        price_per_m2,
+    )
     work_badminton_min = visible[["time_to_work_min", "time_to_badminton_min"]].sum(
         axis=1, min_count=2
     )
@@ -291,6 +301,9 @@ else:
             "size_m2": st.column_config.NumberColumn(
                 "Size", format="%.1f m2", step=1.0
             ),
+            "price_per_m2": st.column_config.NumberColumn(
+                "CHF/m2", format="CHF %.0f/m2", disabled=True
+            ),
             "rooms": st.column_config.NumberColumn("Rooms", step=0.5),
             "time_to_work_min": st.column_config.NumberColumn(
                 "Work", format="%d min", step=1
@@ -305,7 +318,7 @@ else:
             "notes": st.column_config.TextColumn("Notes", width="large"),
             "updated_at": st.column_config.TextColumn("Updated", disabled=True),
         },
-        disabled=["id", "work_badminton_min", "updated_at"],
+        disabled=["id", "price_per_m2", "work_badminton_min", "updated_at"],
     )
 
     if st.button("Save table changes", type="primary"):
