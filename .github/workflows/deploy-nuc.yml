@@ -50,7 +50,7 @@ jobs:
           /run/wrappers/bin/sudo /run/current-system/sw/bin/nixos-rebuild switch --option sandbox false --flake .#nuc
 
       - name: Checkout labs notification
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           path: labs
 
