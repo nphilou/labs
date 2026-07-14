@@ -1,5 +1,5 @@
 {
-  "service": "apartment-tracker",
-  "url": "https://app.nphilou.ch/apartment-tracker",
-  "summary": "Added a calculated price per square meter column to the apartment tracker table."
+  "service": "liana",
+  "url": "https://app.nphilou.ch/liana",
+  "summary": "Added an Infomaniak deployment workflow for the Liana static site."
 }

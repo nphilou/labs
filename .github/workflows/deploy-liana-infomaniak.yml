@@ -1,0 +1,89 @@
+name: Deploy Liana to Infomaniak
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "apps/liana/**"
+      - ".github/workflows/deploy-liana-infomaniak.yml"
+
+concurrency:
+  group: deploy-liana-infomaniak
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, nuc, nixos]
+    env:
+      INFOMANIAK_HOST: ${{ secrets.INFOMANIAK_HOST }}
+      INFOMANIAK_USER: ${{ secrets.INFOMANIAK_USER }}
+      INFOMANIAK_PASS: ${{ secrets.INFOMANIAK_PASS }}
+      INFOMANIAK_PROTOCOL: ${{ secrets.INFOMANIAK_PROTOCOL || 'sftp' }}
+      INFOMANIAK_REMOTE_PATH: ${{ secrets.INFOMANIAK_REMOTE_PATH || '/web' }}
+
+    steps:
+      - name: Checkout labs
+        uses: actions/checkout@v6
+
+      - name: Validate deployment settings
+        run: |
+          set -euo pipefail
+
+          missing=0
+          for name in INFOMANIAK_HOST INFOMANIAK_USER INFOMANIAK_PASS; do
+            if [ -z "${!name:-}" ]; then
+              echo "::error::Missing required secret: ${name}"
+              missing=1
+            fi
+          done
+
+          case "${INFOMANIAK_PROTOCOL}" in
+            sftp|ftpes|ftp) ;;
+            *)
+              echo "::error::INFOMANIAK_PROTOCOL must be one of: sftp, ftpes, ftp"
+              missing=1
+              ;;
+          esac
+
+          test -f apps/liana/index.html
+          exit "${missing}"
+
+      - name: Sync Liana files
+        run: |
+          set -euo pipefail
+
+          case "${INFOMANIAK_PROTOCOL}" in
+            sftp)
+              url="sftp://${INFOMANIAK_HOST}"
+              ;;
+            ftpes)
+              url="ftp://${INFOMANIAK_HOST}"
+              ;;
+            ftp)
+              url="ftp://${INFOMANIAK_HOST}"
+              ;;
+          esac
+
+          commands="$(mktemp)"
+          {
+            echo "set cmd:fail-exit yes"
+            echo "set cmd:interactive false"
+            echo "set net:max-retries 2"
+            echo "set net:timeout 30"
+            if [ "${INFOMANIAK_PROTOCOL}" = "sftp" ]; then
+              echo "set sftp:auto-confirm yes"
+            fi
+            if [ "${INFOMANIAK_PROTOCOL}" = "ftpes" ]; then
+              echo "set ftp:ssl-force true"
+              echo "set ftp:ssl-protect-data true"
+            fi
+            echo "mirror --reverse --delete --verbose --exclude-glob .DS_Store apps/liana \"${INFOMANIAK_REMOTE_PATH}\""
+            echo "bye"
+          } > "${commands}"
+
+          nix shell nixpkgs#lftp -c lftp \
+            -u "${INFOMANIAK_USER},${INFOMANIAK_PASS}" \
+            "${url}" \
+            -f "${commands}"
