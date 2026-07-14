@@ -1,5 +1,5 @@
 {
   "service": "liana",
   "url": "https://app.nphilou.ch/liana",
-  "summary": "Added an Infomaniak deployment workflow for the Liana static site."
+  "summary": "Fixed the Infomaniak deployment workflow for the Liana static site."
 }

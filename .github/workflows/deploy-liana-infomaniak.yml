@@ -85,5 +85,4 @@ jobs:
 
           nix shell nixpkgs#lftp -c lftp \
             -u "${INFOMANIAK_USER},${INFOMANIAK_PASS}" \
-            "${url}" \
-            -f "${commands}"
+            "${url}" < "${commands}"
