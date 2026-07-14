@@ -20,8 +20,7 @@ jobs:
       INFOMANIAK_HOST: ${{ secrets.INFOMANIAK_HOST }}
       INFOMANIAK_USER: ${{ secrets.INFOMANIAK_USER }}
       INFOMANIAK_PASS: ${{ secrets.INFOMANIAK_PASS }}
-      INFOMANIAK_PROTOCOL: ${{ secrets.INFOMANIAK_PROTOCOL || 'ftp' }}
-      INFOMANIAK_REMOTE_PATH: ${{ secrets.INFOMANIAK_REMOTE_PATH || '/web' }}
+      INFOMANIAK_REMOTE_PATH: ${{ secrets.INFOMANIAK_REMOTE_PATH || '/' }}
 
     steps:
       - name: Checkout labs
@@ -39,14 +38,6 @@ jobs:
             fi
           done
 
-          case "${INFOMANIAK_PROTOCOL}" in
-            sftp|ftpes|ftp) ;;
-            *)
-              echo "::error::INFOMANIAK_PROTOCOL must be one of: sftp, ftpes, ftp"
-              missing=1
-              ;;
-          esac
-
           test -f apps/liana/index.html
           exit "${missing}"
 
@@ -54,17 +45,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          case "${INFOMANIAK_PROTOCOL}" in
-            sftp)
-              url="sftp://${INFOMANIAK_HOST}"
-              ;;
-            ftpes)
-              url="ftp://${INFOMANIAK_HOST}"
-              ;;
-            ftp)
-              url="ftp://${INFOMANIAK_HOST}"
-              ;;
-          esac
+          url="ftp://${INFOMANIAK_HOST}"
 
           commands="$(mktemp)"
           {
@@ -72,13 +53,6 @@ jobs:
             echo "set cmd:interactive false"
             echo "set net:max-retries 2"
             echo "set net:timeout 30"
-            if [ "${INFOMANIAK_PROTOCOL}" = "sftp" ]; then
-              echo "set sftp:auto-confirm yes"
-            fi
-            if [ "${INFOMANIAK_PROTOCOL}" = "ftpes" ]; then
-              echo "set ftp:ssl-force true"
-              echo "set ftp:ssl-protect-data true"
-            fi
             echo "mirror --reverse --delete --verbose --exclude-glob .DS_Store apps/liana \"${INFOMANIAK_REMOTE_PATH}\""
             echo "bye"
           } > "${commands}"
