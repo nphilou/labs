@@ -1,5 +1,5 @@
 {
   "service": "liana",
   "url": "https://app.nphilou.ch/liana",
-  "summary": "Updated the Liana Infomaniak deployment workflow to FTP-only and publish at the FTP root."
+  "summary": "Updated the Liana Infomaniak deployment workflow to preserve the FTP quota file."
 }

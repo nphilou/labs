@@ -53,7 +53,7 @@ jobs:
             echo "set cmd:interactive false"
             echo "set net:max-retries 2"
             echo "set net:timeout 30"
-            echo "mirror --reverse --delete --verbose --exclude-glob .DS_Store apps/liana \"${INFOMANIAK_REMOTE_PATH}\""
+            echo "mirror --reverse --delete --verbose --exclude-glob .DS_Store --exclude-glob .ftpquota apps/liana \"${INFOMANIAK_REMOTE_PATH}\""
             echo "bye"
           } > "${commands}"
 
