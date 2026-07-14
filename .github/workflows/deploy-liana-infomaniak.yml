@@ -20,7 +20,7 @@ jobs:
       INFOMANIAK_HOST: ${{ secrets.INFOMANIAK_HOST }}
       INFOMANIAK_USER: ${{ secrets.INFOMANIAK_USER }}
       INFOMANIAK_PASS: ${{ secrets.INFOMANIAK_PASS }}
-      INFOMANIAK_PROTOCOL: ${{ secrets.INFOMANIAK_PROTOCOL || 'sftp' }}
+      INFOMANIAK_PROTOCOL: ${{ secrets.INFOMANIAK_PROTOCOL || 'ftp' }}
       INFOMANIAK_REMOTE_PATH: ${{ secrets.INFOMANIAK_REMOTE_PATH || '/web' }}
 
     steps:
