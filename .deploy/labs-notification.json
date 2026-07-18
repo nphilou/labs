@@ -1,5 +1,5 @@
 {
   "service": "picnic",
   "url": "https://app.nphilou.ch/picnic",
-  "summary": "Rebuilt the picnic places site as a Streamlit app with search, filters, and a map."
+  "summary": "Made the picnic places map interactive: click a marker to see that place's details."
 }
