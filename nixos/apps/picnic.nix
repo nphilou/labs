@@ -15,7 +15,7 @@ in
         DynamicUser = true;
         WorkingDirectory = ../../apps/picnic;
         ExecStart = ''
-          ${pkgs.python3.withPackages (ps: with ps; [ streamlit pandas ])}/bin/streamlit run app.py \
+          ${pkgs.python3.withPackages (ps: with ps; [ streamlit pandas plotly ])}/bin/streamlit run app.py \
             --server.port ${toString port} \
             --server.address 127.0.0.1 \
             --server.headless true
