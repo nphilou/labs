@@ -1,0 +1,628 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Picnic Places - Neuchatel & Jura Trois-Lacs</title>
+  <style>
+    :root {
+      --bg: #f7f4ec;
+      --panel: #ffffff;
+      --ink: #17211b;
+      --muted: #667168;
+      --line: #d8ded4;
+      --green: #246b45;
+      --lake: #2c718f;
+      --sun: #d99b27;
+      --rose: #aa4c3f;
+      --soft: #eef5ed;
+      --shadow: 0 18px 48px rgba(32, 44, 36, .12);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background:
+        linear-gradient(135deg, rgba(36,107,69,.08), transparent 36%),
+        linear-gradient(315deg, rgba(44,113,143,.10), transparent 42%),
+        var(--bg);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.45;
+    }
+
+    a { color: inherit; }
+
+    .app {
+      display: grid;
+      grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+      min-height: 100vh;
+    }
+
+    aside {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      padding: 24px;
+      border-right: 1px solid var(--line);
+      background: rgba(247,244,236,.92);
+      backdrop-filter: blur(16px);
+      overflow: auto;
+    }
+
+    main { padding: 28px; min-width: 0; }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+
+    .mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 8px;
+      background: var(--green);
+      color: white;
+      display: grid;
+      place-items: center;
+      box-shadow: var(--shadow);
+    }
+
+    .mark svg { width: 26px; height: 26px; }
+
+    h1 {
+      margin: 0;
+      font-size: 1.2rem;
+      line-height: 1.15;
+      letter-spacing: 0;
+    }
+
+    .source {
+      color: var(--muted);
+      font-size: .85rem;
+      margin-top: 4px;
+    }
+
+    .control-group {
+      border-top: 1px solid var(--line);
+      padding-top: 18px;
+      margin-top: 18px;
+    }
+
+    label,
+    .label {
+      display: block;
+      color: var(--muted);
+      font-size: .75rem;
+      font-weight: 760;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    input,
+    select {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--ink);
+      border-radius: 8px;
+      padding: 11px 12px;
+      font: inherit;
+      outline: none;
+    }
+
+    input:focus,
+    select:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(36,107,69,.12); }
+
+    .checks {
+      display: grid;
+      gap: 9px;
+    }
+
+    .check {
+      display: grid;
+      grid-template-columns: 18px 1fr;
+      align-items: center;
+      gap: 9px;
+      color: var(--ink);
+      font-size: .95rem;
+    }
+
+    .check input { width: 18px; height: 18px; accent-color: var(--green); }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .summary h2 {
+      margin: 0;
+      font-size: clamp(1.8rem, 4vw, 3.5rem);
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    .summary p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      max-width: 820px;
+    }
+
+    .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    .button {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-weight: 750;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .button.primary {
+      background: var(--green);
+      border-color: var(--green);
+      color: white;
+    }
+
+    .overview {
+      display: grid;
+      grid-template-columns: minmax(260px, 1.2fr) minmax(260px, .8fr);
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .panel {
+      background: rgba(255,255,255,.86);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .map-panel {
+      min-height: 310px;
+      position: relative;
+      background:
+        linear-gradient(160deg, rgba(44,113,143,.18), transparent 34%),
+        linear-gradient(25deg, rgba(36,107,69,.22), transparent 55%),
+        #edf4ea;
+    }
+
+    .map-panel svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+      min-height: 310px;
+    }
+
+    .map-label {
+      position: absolute;
+      left: 18px;
+      bottom: 16px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      background: rgba(255,255,255,.86);
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-size: .85rem;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1px;
+      background: var(--line);
+    }
+
+    .stat {
+      min-height: 104px;
+      background: var(--panel);
+      padding: 18px;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 2rem;
+      line-height: 1;
+    }
+
+    .stat span { display: block; margin-top: 8px; color: var(--muted); font-size: .9rem; }
+
+    .places {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 12px;
+    }
+
+    .place {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      min-width: 0;
+    }
+
+    .place-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .place h3 {
+      margin: 0;
+      font-size: 1.05rem;
+      letter-spacing: 0;
+    }
+
+    .meta {
+      color: var(--muted);
+      font-size: .9rem;
+      margin-top: 3px;
+    }
+
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 12px 0;
+    }
+
+    .badge {
+      border-radius: 999px;
+      padding: 4px 8px;
+      background: var(--soft);
+      color: var(--green);
+      font-size: .78rem;
+      font-weight: 760;
+      white-space: nowrap;
+    }
+
+    .badge.blue { color: var(--lake); background: #e8f3f6; }
+    .badge.gold { color: #8b5c08; background: #fff4d8; }
+    .badge.red { color: var(--rose); background: #faece9; }
+
+    .detail {
+      display: grid;
+      gap: 9px;
+      margin-top: 10px;
+      color: #2d3830;
+      font-size: .93rem;
+    }
+
+    .detail b { color: var(--muted); }
+
+    .map-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 12px;
+      color: var(--green);
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .empty {
+      display: none;
+      padding: 40px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .load {
+      padding: 40px;
+      color: var(--muted);
+    }
+
+    @media (max-width: 920px) {
+      .app { display: block; }
+      aside { position: relative; height: auto; border-right: 0; border-bottom: 1px solid var(--line); }
+      main { padding: 20px; }
+      .overview { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 520px) {
+      aside,
+      main { padding: 16px; }
+      .places { grid-template-columns: 1fr; }
+      .stats { grid-template-columns: 1fr 1fr; }
+      .place-head { display: block; }
+      .actions { width: 100%; }
+      .button { flex: 1; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside>
+      <div class="brand">
+        <div class="mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" role="img">
+            <path d="M7 24h18l-4-9 3-2-2-3-4 2-2-5-5 12H7z" fill="currentColor" opacity=".95"/>
+            <path d="M8 26h16" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div>
+          <h1>Picnic places</h1>
+          <div class="source">Neuchatel and Jura Trois-Lacs</div>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label for="search">Search</label>
+        <input id="search" type="search" placeholder="Town, place, grill, playground...">
+      </div>
+
+      <div class="control-group">
+        <label for="locality">Locality</label>
+        <select id="locality">
+          <option value="">All localities</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label for="sort">Sort</label>
+        <select id="sort">
+          <option value="locality">Locality</option>
+          <option value="capacity">Largest capacity</option>
+          <option value="covered">Covered first</option>
+          <option value="reservation">Reservation first</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <div class="label">Filters</div>
+        <div class="checks">
+          <label class="check"><input id="covered" type="checkbox"> Covered places only</label>
+          <label class="check"><input id="reservation" type="checkbox"> Reservation possible</label>
+          <label class="check"><input id="gps" type="checkbox"> Has GPS coordinates</label>
+          <label class="check"><input id="play" type="checkbox"> Playground or games</label>
+          <label class="check"><input id="grill" type="checkbox"> Grill or fireplace</label>
+        </div>
+      </div>
+    </aside>
+
+    <main>
+      <div class="toolbar">
+        <section class="summary">
+          <h2 id="resultTitle">Picnic directory</h2>
+          <p>Search and filter the picnic places extracted from the official Jura Trois-Lacs PDF. Open any geocoded place directly in OpenStreetMap.</p>
+        </section>
+        <div class="actions">
+          <a class="button" href="https://static.mycity.travel/manage/uploads/8/58/106511/2/places-de-pique-nique.pdf">Source PDF</a>
+          <button class="button primary" id="reset" type="button">Reset</button>
+        </div>
+      </div>
+
+      <section class="overview">
+        <div class="panel map-panel">
+          <svg id="map" viewBox="0 0 800 360" aria-label="Coordinate overview"></svg>
+          <div class="map-label">Relative GPS overview, not a navigational map</div>
+        </div>
+        <div class="panel stats">
+          <div class="stat"><strong id="statTotal">0</strong><span>visible places</span></div>
+          <div class="stat"><strong id="statGps">0</strong><span>with GPS</span></div>
+          <div class="stat"><strong id="statCovered">0</strong><span>covered</span></div>
+          <div class="stat"><strong id="statReserve">0</strong><span>reservable</span></div>
+        </div>
+      </section>
+
+      <div id="places" class="places"><div class="load">Loading picnic places...</div></div>
+      <div id="empty" class="panel empty">No picnic places match those filters.</div>
+    </main>
+  </div>
+
+  <script>
+    const state = {
+      places: [],
+      filtered: [],
+    };
+
+    const els = {
+      search: document.querySelector("#search"),
+      locality: document.querySelector("#locality"),
+      sort: document.querySelector("#sort"),
+      covered: document.querySelector("#covered"),
+      reservation: document.querySelector("#reservation"),
+      gps: document.querySelector("#gps"),
+      play: document.querySelector("#play"),
+      grill: document.querySelector("#grill"),
+      reset: document.querySelector("#reset"),
+      places: document.querySelector("#places"),
+      empty: document.querySelector("#empty"),
+      map: document.querySelector("#map"),
+      resultTitle: document.querySelector("#resultTitle"),
+      statTotal: document.querySelector("#statTotal"),
+      statGps: document.querySelector("#statGps"),
+      statCovered: document.querySelector("#statCovered"),
+      statReserve: document.querySelector("#statReserve"),
+    };
+
+    const text = (value) => (value || "").toString();
+    const yes = (value) => text(value).toLowerCase().startsWith("oui");
+    const hasPlay = (place) => /jeux|place de jeux|balan/.test(searchBlob(place));
+    const hasGrill = (place) => /gril|grill|foyer|cheminee|cheminée/.test(searchBlob(place));
+    const capacity = (place) => {
+      const match = text(place.capacity).match(/\d+/);
+      return match ? Number(match[0]) : 0;
+    };
+
+    function normalize(value) {
+      return text(value).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    }
+
+    function searchBlob(place) {
+      return normalize([
+        place.locality,
+        place.description,
+        place.situation,
+        place.access,
+        place.infrastructure,
+        place.responsible,
+      ].join(" "));
+    }
+
+    function populateLocalities() {
+      const localities = [...new Set(state.places.map((place) => place.locality))].sort((a, b) => a.localeCompare(b));
+      for (const locality of localities) {
+        const option = document.createElement("option");
+        option.value = locality;
+        option.textContent = locality;
+        els.locality.append(option);
+      }
+    }
+
+    function applyFilters() {
+      const query = normalize(els.search.value);
+      let rows = state.places.filter((place) => {
+        if (query && !searchBlob(place).includes(query)) return false;
+        if (els.locality.value && place.locality !== els.locality.value) return false;
+        if (els.covered.checked && !yes(place.covered)) return false;
+        if (els.reservation.checked && !yes(place.reservation)) return false;
+        if (els.gps.checked && !(place.lat && place.lon)) return false;
+        if (els.play.checked && !hasPlay(place)) return false;
+        if (els.grill.checked && !hasGrill(place)) return false;
+        return true;
+      });
+
+      rows.sort((a, b) => {
+        if (els.sort.value === "capacity") return capacity(b) - capacity(a) || a.locality.localeCompare(b.locality);
+        if (els.sort.value === "covered") return Number(yes(b.covered)) - Number(yes(a.covered)) || a.locality.localeCompare(b.locality);
+        if (els.sort.value === "reservation") return Number(yes(b.reservation)) - Number(yes(a.reservation)) || a.locality.localeCompare(b.locality);
+        return a.locality.localeCompare(b.locality) || a.situation.localeCompare(b.situation);
+      });
+
+      state.filtered = rows;
+      render();
+    }
+
+    function badge(label, className = "") {
+      return `<span class="badge ${className}">${label}</span>`;
+    }
+
+    function renderPlace(place) {
+      const mapUrl = place.lat && place.lon
+        ? `https://www.openstreetmap.org/?mlat=${place.lat}&mlon=${place.lon}#map=16/${place.lat}/${place.lon}`
+        : "";
+      const badges = [
+        yes(place.covered) ? badge("covered") : "",
+        yes(place.reservation) ? badge("reservation", "gold") : "",
+        place.lat && place.lon ? badge("GPS", "blue") : "",
+        hasPlay(place) ? badge("playground", "red") : "",
+        hasGrill(place) ? badge("grill") : "",
+        place.capacity ? badge(`${place.capacity} people`, "blue") : "",
+      ].join("");
+
+      return `
+        <article class="place">
+          <div class="place-head">
+            <div>
+              <h3>${escapeHtml(place.locality)}</h3>
+              <div class="meta">${escapeHtml(place.situation || place.description)}</div>
+            </div>
+            <div class="meta">p. ${place.sourcePage}</div>
+          </div>
+          <div class="badges">${badges}</div>
+          <div class="detail">
+            ${place.description ? `<div><b>Type:</b> ${escapeHtml(place.description)}</div>` : ""}
+            ${place.infrastructure ? `<div><b>Infrastructure:</b> ${escapeHtml(place.infrastructure)}</div>` : ""}
+            ${place.access ? `<div><b>Access:</b> ${escapeHtml(place.access)}</div>` : ""}
+            ${place.responsible || place.phone ? `<div><b>Contact:</b> ${escapeHtml([place.responsible, place.phone].filter(Boolean).join(" - "))}</div>` : ""}
+          </div>
+          ${mapUrl ? `<a class="map-link" href="${mapUrl}">Open map</a>` : ""}
+        </article>
+      `;
+    }
+
+    function escapeHtml(value) {
+      return text(value).replace(/[&<>"']/g, (char) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;",
+      }[char]));
+    }
+
+    function renderMap(rows) {
+      const points = rows.filter((place) => place.lat && place.lon);
+      const all = state.places.filter((place) => place.lat && place.lon);
+      if (!all.length) return;
+
+      const lats = all.map((point) => point.lat);
+      const lons = all.map((point) => point.lon);
+      const minLat = Math.min(...lats);
+      const maxLat = Math.max(...lats);
+      const minLon = Math.min(...lons);
+      const maxLon = Math.max(...lons);
+      const project = (point) => {
+        const x = 58 + ((point.lon - minLon) / (maxLon - minLon || 1)) * 684;
+        const y = 302 - ((point.lat - minLat) / (maxLat - minLat || 1)) * 244;
+        return [x, y];
+      };
+
+      const visibleIds = new Set(points.map((point) => point.id));
+      const dots = all.map((point) => {
+        const [x, y] = project(point);
+        const visible = visibleIds.has(point.id);
+        return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${visible ? 4.2 : 2.4}" fill="${visible ? "#246b45" : "#aab8ac"}" opacity="${visible ? ".95" : ".35"}"><title>${escapeHtml(point.locality)} - ${escapeHtml(point.situation)}</title></circle>`;
+      }).join("");
+
+      els.map.innerHTML = `
+        <path d="M70 258 C170 208 218 244 294 178 C372 110 450 176 536 108 C610 50 684 78 738 54" fill="none" stroke="#2c718f" stroke-width="18" stroke-linecap="round" opacity=".18"/>
+        <path d="M72 286 C210 238 314 260 430 196 C542 136 620 144 736 98" fill="none" stroke="#246b45" stroke-width="2" stroke-dasharray="8 8" opacity=".45"/>
+        ${dots}
+      `;
+    }
+
+    function render() {
+      const rows = state.filtered;
+      els.resultTitle.textContent = `${rows.length} picnic places`;
+      els.statTotal.textContent = rows.length;
+      els.statGps.textContent = rows.filter((place) => place.lat && place.lon).length;
+      els.statCovered.textContent = rows.filter((place) => yes(place.covered)).length;
+      els.statReserve.textContent = rows.filter((place) => yes(place.reservation)).length;
+      els.places.innerHTML = rows.map(renderPlace).join("");
+      els.empty.style.display = rows.length ? "none" : "block";
+      renderMap(rows);
+    }
+
+    function reset() {
+      els.search.value = "";
+      els.locality.value = "";
+      els.sort.value = "locality";
+      for (const checkbox of [els.covered, els.reservation, els.gps, els.play, els.grill]) {
+        checkbox.checked = false;
+      }
+      applyFilters();
+    }
+
+    for (const control of [els.search, els.locality, els.sort, els.covered, els.reservation, els.gps, els.play, els.grill]) {
+      control.addEventListener("input", applyFilters);
+      control.addEventListener("change", applyFilters);
+    }
+    els.reset.addEventListener("click", reset);
+
+    fetch("places.json")
+      .then((response) => response.json())
+      .then((data) => {
+        state.places = data.places;
+        populateLocalities();
+        applyFilters();
+      })
+      .catch((error) => {
+        els.places.innerHTML = `<div class="panel load">Could not load picnic data: ${escapeHtml(error.message)}</div>`;
+      });
+  </script>
+</body>
+</html>

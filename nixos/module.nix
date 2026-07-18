@@ -19,6 +19,7 @@ in
     ./apps/streamlit-basic.nix
     ./apps/buyvsrent.nix
     ./apps/liana.nix
+    ./apps/picnic.nix
     ./apps/tgtg.nix
   ];
 
