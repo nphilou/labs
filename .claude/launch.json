@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "picnic",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "9108", "--directory", "apps/picnic"],
+      "port": 9108
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 {
   "service": "picnic",
   "url": "https://app.nphilou.ch/picnic",
-  "summary": "Rebuilt the picnic page with an interactive Leaflet map and added 42 places from the La Gruyère (FR) PDF."
+  "summary": "Added Google Maps buttons to picnic place cards and map popups."
 }
