@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Places de pique-nique</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" crossorigin="" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" crossorigin="" />
+  <style>
+    :root {
+      --bg: #f4f6f3;
+      --panel: #ffffff;
+      --ink: #22301f;
+      --muted: #67765f;
+      --line: #dde4d8;
+      --accent: #2f7d43;
+      --accent-soft: #e4f1e5;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: "Avenir Next", "Segoe UI", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      padding: 14px 20px 10px;
+      border-bottom: 1px solid var(--line);
+      background: var(--panel);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 18px;
+      align-items: baseline;
+    }
+    header h1 { margin: 0; font-size: 20px; }
+    header p { margin: 0; color: var(--muted); font-size: 13px; }
+    main {
+      flex: 1;
+      display: flex;
+      min-height: 0;
+    }
+    #sidebar {
+      width: 380px;
+      max-width: 45%;
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid var(--line);
+      background: var(--panel);
+    }
+    .controls {
+      padding: 12px;
+      display: grid;
+      gap: 8px;
+      border-bottom: 1px solid var(--line);
+    }
+    .controls input, .controls select {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font: inherit;
+      background: #fff;
+      color: inherit;
+    }
+    .controls .row { display: flex; gap: 8px; }
+    .controls .row > * { flex: 1; min-width: 0; }
+    .count { font-size: 12px; color: var(--muted); }
+    #list {
+      overflow-y: auto;
+      flex: 1;
+      padding: 8px;
+      display: grid;
+      gap: 8px;
+      align-content: start;
+    }
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px 12px;
+      cursor: pointer;
+      background: #fff;
+    }
+    .card:hover { border-color: var(--accent); }
+    .card.active { border-color: var(--accent); background: var(--accent-soft); }
+    .card h3 { margin: 0 0 2px; font-size: 14px; }
+    .card .loc { color: var(--accent); font-size: 12px; font-weight: 600; }
+    .card .situation { margin: 4px 0 0; font-size: 12px; color: var(--muted); }
+    .badges { margin-top: 6px; display: flex; flex-wrap: wrap; gap: 4px; }
+    .badge {
+      font-size: 11px;
+      padding: 1px 8px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+    .badge.gray { background: #eef0ec; color: var(--muted); }
+    #map { flex: 1; min-width: 0; }
+    .popup h3 { margin: 0 0 4px; font-size: 14px; }
+    .popup .loc { color: var(--accent); font-size: 12px; font-weight: 600; }
+    .popup dl { margin: 6px 0 0; font-size: 12px; display: grid; grid-template-columns: auto 1fr; gap: 2px 8px; }
+    .popup dt { color: var(--muted); }
+    .popup dd { margin: 0; }
+    .popup a { color: var(--accent); }
+    .leaflet-popup-content { max-width: 280px; }
+    footer {
+      padding: 6px 20px;
+      font-size: 11px;
+      color: var(--muted);
+      background: var(--panel);
+      border-top: 1px solid var(--line);
+    }
+    footer a { color: var(--accent); }
+    @media (max-width: 720px) {
+      main { flex-direction: column; }
+      #sidebar { width: 100%; max-width: none; height: 45%; border-right: none; border-bottom: 1px solid var(--line); }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Places de pique-nique</h1>
+    <p>Jura Trois-Lacs &amp; La Gruyère — <span id="total"></span></p>
+  </header>
+  <main>
+    <div id="sidebar">
+      <div class="controls">
+        <input id="search" type="search" placeholder="Rechercher (lieu, description, équipement…)" />
+        <div class="row">
+          <select id="locality"><option value="">Toutes les localités</option></select>
+          <select id="source"><option value="">Toutes les sources</option></select>
+        </div>
+        <div class="row">
+          <select id="covered">
+            <option value="">Couvert ou non</option>
+            <option value="oui">Couvert</option>
+            <option value="non">Non couvert</option>
+          </select>
+          <select id="geocoded">
+            <option value="">Avec ou sans GPS</option>
+            <option value="yes">Sur la carte</option>
+            <option value="no">Sans coordonnées</option>
+          </select>
+        </div>
+        <div class="count" id="count"></div>
+      </div>
+      <div id="list"></div>
+    </div>
+    <div id="map"></div>
+  </main>
+  <footer id="sources-note"></footer>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js" crossorigin=""></script>
+  <script>
+    const SOURCE_FILES = ["places.json", "places-fribourg.json"];
+
+    const els = {
+      search: document.querySelector("#search"),
+      locality: document.querySelector("#locality"),
+      source: document.querySelector("#source"),
+      covered: document.querySelector("#covered"),
+      geocoded: document.querySelector("#geocoded"),
+      list: document.querySelector("#list"),
+      count: document.querySelector("#count"),
+      total: document.querySelector("#total"),
+      sourcesNote: document.querySelector("#sources-note"),
+    };
+
+    const state = { places: [], sources: [], activeId: null };
+    const markers = new Map();
+
+    const map = L.map("map", { zoomControl: true });
+    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    }).addTo(map);
+    const cluster = L.markerClusterGroup({ maxClusterRadius: 45, showCoverageOnHover: false });
+    map.addLayer(cluster);
+    map.setView([46.8, 7.0], 9);
+
+    function escapeHtml(value) {
+      return String(value ?? "").replace(/[&<>"']/g, (c) => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+      })[c]);
+    }
+
+    function osmUrl(place) {
+      return `https://www.openstreetmap.org/?mlat=${place.lat}&mlon=${place.lon}#map=16/${place.lat}/${place.lon}`;
+    }
+
+    function popupHtml(place) {
+      const rows = [
+        ["Situation", place.situation],
+        ["Accès", place.access],
+        ["Équipement", place.infrastructure],
+        ["Capacité", place.capacity],
+        ["Couvert", place.covered],
+        ["Réservation", place.reservation],
+        ["Contact", place.phone],
+      ].filter(([, v]) => v);
+      return `
+        <div class="popup">
+          <div class="loc">${escapeHtml(place.locality)}</div>
+          <h3>${escapeHtml(place.description || "Place de pique-nique")}</h3>
+          <dl>${rows.map(([k, v]) => `<dt>${k}</dt><dd>${escapeHtml(v)}</dd>`).join("")}</dl>
+          <p style="margin:6px 0 0"><a href="${osmUrl(place)}" target="_blank" rel="noopener">Ouvrir dans OpenStreetMap</a></p>
+        </div>`;
+    }
+
+    function cardHtml(place) {
+      const badges = [];
+      if (place.covered === "oui") badges.push('<span class="badge">couvert</span>');
+      if (/foyer|feu|grill/i.test(place.infrastructure || "")) badges.push('<span class="badge">feu/grill</span>');
+      if (/jeux/i.test(place.infrastructure || "")) badges.push('<span class="badge">jeux</span>');
+      if (place.lat == null) badges.push('<span class="badge gray">pas de GPS</span>');
+      return `
+        <div class="card${place.id === state.activeId ? " active" : ""}" data-id="${escapeHtml(place.id)}">
+          <div class="loc">${escapeHtml(place.locality)}</div>
+          <h3>${escapeHtml(place.description || "Place de pique-nique")}</h3>
+          ${place.situation ? `<p class="situation">${escapeHtml(place.situation)}</p>` : ""}
+          <div class="badges">${badges.join("")}</div>
+        </div>`;
+    }
+
+    function filtered() {
+      const q = els.search.value.trim().toLowerCase();
+      return state.places.filter((place) => {
+        if (els.locality.value && place.locality !== els.locality.value) return false;
+        if (els.source.value && place.sourceKey !== els.source.value) return false;
+        if (els.covered.value && place.covered !== els.covered.value) return false;
+        if (els.geocoded.value === "yes" && place.lat == null) return false;
+        if (els.geocoded.value === "no" && place.lat != null) return false;
+        if (q) {
+          const haystack = [place.locality, place.description, place.situation, place.access, place.infrastructure]
+            .join(" ").toLowerCase();
+          if (!haystack.includes(q)) return false;
+        }
+        return true;
+      });
+    }
+
+    function render() {
+      const rows = filtered();
+      els.list.innerHTML = rows.map(cardHtml).join("") || '<p style="padding:12px;color:var(--muted)">Aucun résultat.</p>';
+      const geocoded = rows.filter((p) => p.lat != null);
+      els.count.textContent = `${rows.length} place(s) — ${geocoded.length} sur la carte`;
+
+      cluster.clearLayers();
+      markers.clear();
+      for (const place of geocoded) {
+        const marker = L.marker([place.lat, place.lon]);
+        marker.bindPopup(popupHtml(place));
+        marker.on("click", () => setActive(place.id, { pan: false }));
+        markers.set(place.id, marker);
+        cluster.addLayer(marker);
+      }
+      if (geocoded.length) {
+        const bounds = cluster.getBounds().pad(0.08);
+        requestAnimationFrame(() => {
+          map.invalidateSize();
+          map.fitBounds(bounds);
+        });
+      }
+    }
+
+    function setActive(id, { pan = true } = {}) {
+      state.activeId = id;
+      for (const card of els.list.querySelectorAll(".card")) {
+        card.classList.toggle("active", card.dataset.id === id);
+      }
+      const card = [...els.list.querySelectorAll(".card")].find((c) => c.dataset.id === id);
+      if (card) card.scrollIntoView({ block: "nearest", behavior: "smooth" });
+      const marker = markers.get(id);
+      if (marker && pan) {
+        cluster.zoomToShowLayer(marker, () => marker.openPopup());
+      }
+    }
+
+    els.list.addEventListener("click", (event) => {
+      const card = event.target.closest(".card");
+      if (card) setActive(card.dataset.id);
+    });
+
+    for (const el of [els.search, els.locality, els.source, els.covered, els.geocoded]) {
+      el.addEventListener("input", () => { state.activeId = null; render(); });
+    }
+
+    async function load() {
+      const datasets = await Promise.all(
+        SOURCE_FILES.map(async (file) => {
+          const response = await fetch(file);
+          if (!response.ok) throw new Error(`${file}: ${response.status}`);
+          return { file, data: await response.json() };
+        })
+      );
+      for (const { file, data } of datasets) {
+        state.sources.push({ key: file, title: data.title, url: data.source, count: data.places.length });
+        for (const place of data.places) {
+          state.places.push({ ...place, id: `${file}:${place.id}`, sourceKey: file, sourceTitle: data.title });
+        }
+      }
+      state.places.sort((a, b) => a.locality.localeCompare(b.locality, "fr") ||
+        (a.description || "").localeCompare(b.description || "", "fr"));
+
+      const localities = [...new Set(state.places.map((p) => p.locality))].sort((a, b) => a.localeCompare(b, "fr"));
+      els.locality.insertAdjacentHTML("beforeend",
+        localities.map((l) => `<option value="${escapeHtml(l)}">${escapeHtml(l)}</option>`).join(""));
+      els.source.insertAdjacentHTML("beforeend",
+        state.sources.map((s) => `<option value="${escapeHtml(s.key)}">${escapeHtml(s.title)}</option>`).join(""));
+
+      els.total.textContent = `${state.places.length} places`;
+      els.sourcesNote.innerHTML = "Sources : " + state.sources
+        .map((s) => `<a href="${escapeHtml(s.url)}" target="_blank" rel="noopener">${escapeHtml(s.title)}</a> (${s.count})`)
+        .join(" · ");
+      render();
+    }
+
+    load().catch((error) => {
+      els.list.innerHTML = `<p style="padding:12px;color:#a33">Erreur de chargement : ${escapeHtml(error.message)}</p>`;
+    });
+  </script>
+</body>
+</html>
