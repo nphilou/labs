@@ -1,5 +1,5 @@
 {
   "service": "picnic",
   "url": "https://app.nphilou.ch/picnic",
-  "summary": "Added official picnic-place data for 20+ more Swiss cantons (now 716 places nationwide), sourced from cantonal/regional tourism and open-data sites."
+  "summary": "Redesigned the picnic map (\"Rastplatz\") with a split map/list layout, canton and view/amenity filters, saved favourites, and a slide-in detail view — same 716-place cantonal dataset."
 }
