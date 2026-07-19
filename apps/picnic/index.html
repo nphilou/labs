@@ -491,8 +491,10 @@ function inferAmenities(p){
   const t=(p.infrastructure||"").toLowerCase();
   const fire=/foyer|grill|\bgrils?\b|barbecue|brasero|rôtiss|feuerstelle|cheminée|raclette/.test(t)
     || (/\bfeu\b/.test(t) && !/sans .{0,14}feu|feu interdit|pas de feu|interdiction de feu|défense de feu/.test(t));
+  const tables=/\btables?\b|\btisch|tavol[oi]/.test(t)
+    && !/sans .{0,14}tables?|pas de tables?|aucune tables?|ohne tisch|keine? tische?/.test(t);
   return {
-    tables:/\btable/.test(t),
+    tables,
     grills:fire,
     water:/point d'eau|eau potable|eau courante|fontaine|robinet|source|wasser|brunnen|trinkwasser/.test(t),
     toilets:/toilette|\bwc\b|sanitaire/.test(t),
