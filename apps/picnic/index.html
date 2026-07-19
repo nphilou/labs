@@ -530,8 +530,11 @@ function buildMarkers(){
     const m=L.marker([s.lat,s.lon],{icon:makeIcon(s,false)});
     m.on("click",()=>openDetail(s.id,false));
     markers[s.id]=m;
-    cluster.addLayer(m);
   });
+}
+function syncMapMarkers(v){
+  cluster.clearLayers();
+  cluster.addLayers(v.filter(hasCoords).map(s=>markers[s.id]).filter(Boolean));
 }
 
 /* ---------- Filtering ---------- */
@@ -565,6 +568,7 @@ function amenMini(s){
 }
 function renderList(){
   const v=visible();
+  syncMapMarkers(v);
   document.getElementById("count").textContent=v.length;
   if(!v.length){
     listEl.innerHTML='<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><div>No spots match your filters.</div></div>';
@@ -644,12 +648,15 @@ function openDetail(id,fromList){
   if(state.active!==null&&markers[state.active])markers[state.active].setIcon(makeIcon(spots.find(x=>x.id===state.active),false));
   state.active=id;
   if(markers[id])markers[id].setIcon(makeIcon(s,true));
-  if(hasCoords(s)){
-    if(markers[id])cluster.zoomToShowLayer(markers[id],()=>{});
-    map.flyTo([s.lat,s.lon],Math.max(map.getZoom(),13),{duration:.7});
-  }
   renderDetail(s);
   renderList();
+  if(hasCoords(s)){
+    map.flyTo([s.lat,s.lon],Math.max(map.getZoom(),13),{duration:.7});
+    map.once("moveend",()=>{
+      const m=markers[id];
+      if(m&&state.active===id&&cluster.hasLayer(m))cluster.zoomToShowLayer(m,()=>{});
+    });
+  }
 }
 function closeDetail(){
   detailEl.classList.remove("open");
@@ -745,7 +752,7 @@ document.getElementById("submitForm").addEventListener("submit",e=>{
   spots.push(s);
   if(hasCoords(s)){
     const m=L.marker([s.lat,s.lon],{icon:makeIcon(s,false)});
-    m.on("click",()=>openDetail(s.id,false));markers[s.id]=m;cluster.addLayer(m);
+    m.on("click",()=>openDetail(s.id,false));markers[s.id]=m;
   }
   buildFilterUI();
   document.getElementById("regionSel").value=state.region;
