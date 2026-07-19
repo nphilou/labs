@@ -1,5 +1,5 @@
 {
   "service": "picnic",
   "url": "https://app.nphilou.ch/picnic",
-  "summary": "Added Google Maps buttons to picnic place cards and map popups."
+  "summary": "Added official picnic-place data for 20+ more Swiss cantons (now 716 places nationwide), sourced from cantonal/regional tourism and open-data sites."
 }

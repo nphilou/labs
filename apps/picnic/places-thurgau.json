@@ -1,0 +1,92 @@
+{
+  "source": "https://www.weinfelden-erleben.ch/erlebnisse/feuerstellen",
+  "title": "Feuerstellen - Weinfelden erleben (offizielles Tourismusportal)",
+  "region": "Thurgau (Region Weinfelden)",
+  "count": 6,
+  "places": [
+    {
+      "id": "tg001",
+      "locality": "Weinfelden",
+      "description": "Ganggelisteg",
+      "situation": "Grillstelle am Wald in der Nähe der Thur.",
+      "access": "Mit dem Auto erreichbar",
+      "covered": "non",
+      "infrastructure": "Feuerholz, Brunnen, Parkplatz",
+      "capacity": "",
+      "reservation": "non",
+      "lat": null,
+      "lon": null,
+      "sourcePage": 1
+    },
+    {
+      "id": "tg002",
+      "locality": "Weinfelden",
+      "description": "Waldschule Weinfelden",
+      "situation": "Ausgangspunkt für Erlebnis- und Gripspfad, überdachtes Waldschulzimmer.",
+      "access": "Mit dem Auto zur Waldschule erreichbar",
+      "covered": "oui",
+      "infrastructure": "Tische, Bänke, Brunnen",
+      "capacity": "",
+      "reservation": "oui",
+      "lat": null,
+      "lon": null,
+      "sourcePage": 1
+    },
+    {
+      "id": "tg003",
+      "locality": "Weinfelden",
+      "description": "Eierlewald",
+      "situation": "Gemütliche Feuerstelle südöstlich von Weinfelden.",
+      "access": "Mit dem Auto erreichbar",
+      "covered": "non",
+      "infrastructure": "Mehrere Tische, Brunnen, Holzhütte mit Feuerholz",
+      "capacity": "",
+      "reservation": "non",
+      "lat": null,
+      "lon": null,
+      "sourcePage": 1
+    },
+    {
+      "id": "tg004",
+      "locality": "Weinfelden",
+      "description": "Tätsch",
+      "situation": "Waldlichtung neben einem kleinen Weiher, ruhige und erholsame Atmosphäre.",
+      "access": "Mit dem Auto erreichbar",
+      "covered": "non",
+      "infrastructure": "Parkplatz, Brunnen",
+      "capacity": "",
+      "reservation": "non",
+      "lat": null,
+      "lon": null,
+      "sourcePage": 1
+    },
+    {
+      "id": "tg005",
+      "locality": "Weinfelden",
+      "description": "Thurberg",
+      "situation": "Zwei Feuerstellen, etwas versteckt im Wald beim Restaurant Thurberg.",
+      "access": "Kurzer Fussweg vom Restaurant Thurberg",
+      "covered": "non",
+      "infrastructure": "Vier Tische mit Bänken, Brunnen",
+      "capacity": "grössere Gruppen",
+      "reservation": "non",
+      "lat": null,
+      "lon": null,
+      "sourcePage": 1
+    },
+    {
+      "id": "tg006",
+      "locality": "Weinfelden",
+      "description": "Stelzenhof",
+      "situation": "Wohl höchstgelegenste Feuerstelle der Region, einige Meter oberhalb des Restaurants Stelzenhof mit Panoramaaussicht.",
+      "access": "",
+      "covered": "non",
+      "infrastructure": "",
+      "capacity": "",
+      "reservation": "non",
+      "lat": null,
+      "lon": null,
+      "sourcePage": 1
+    }
+  ]
+}

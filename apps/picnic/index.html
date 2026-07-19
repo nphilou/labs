@@ -141,7 +141,7 @@
 <body>
   <header>
     <h1>Places de pique-nique</h1>
-    <p>Jura Trois-Lacs &amp; La Gruyère — <span id="total"></span></p>
+    <p>Suisse romande &amp; alémanique — <span id="total"></span></p>
   </header>
   <main>
     <div id="sidebar">
@@ -175,7 +175,33 @@
           integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js" crossorigin=""></script>
   <script>
-    const SOURCE_FILES = ["places.json", "places-fribourg.json"];
+    const SOURCE_FILES = [
+      "places.json",
+      "places-fribourg.json",
+      "places-vaud.json",
+      "places-geneve.json",
+      "places-zurich.json",
+      "places-zug.json",
+      "places-stgallen.json",
+      "places-schaffhausen.json",
+      "places-appenzell.json",
+      "places-basel-landschaft.json",
+      "places-basel-stadt.json",
+      "places-valais.json",
+      "places-jura.json",
+      "places-bern-emmental.json",
+      "places-bern-gantrisch.json",
+      "places-bern-madeinbern.json",
+      "places-bern-seeland.json",
+      "places-luzern.json",
+      "places-aargau.json",
+      "places-schwyz.json",
+      "places-glarus.json",
+      "places-graubunden.json",
+      "places-ticino.json",
+      "places-thurgau.json",
+      "places-solothurn.json",
+    ];
 
     const els = {
       search: document.querySelector("#search"),

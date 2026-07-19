@@ -1,0 +1,92 @@
+{
+  "source": "https://www.bregaglia.ch/en/picnic-areas-and-playgrounds",
+  "title": "Picnic areas and playgrounds - Bregaglia Engadin Turismo",
+  "region": "Graubünden / Grigioni (Val Bregaglia)",
+  "count": 6,
+  "places": [
+    {
+      "id": "gr001",
+      "locality": "Castasegna",
+      "description": "Grillstelle beim Spielplatz",
+      "situation": "Direkt neben dem Spielplatz von Castasegna.",
+      "access": "",
+      "covered": "non",
+      "infrastructure": "Grill, Tisch aus Granit, Bänke",
+      "capacity": "",
+      "reservation": "non",
+      "lat": null,
+      "lon": null,
+      "sourcePage": 1
+    },
+    {
+      "id": "gr002",
+      "locality": "Vicosoprano",
+      "description": "Picknickplatz am Weiher des Campingplatzes Mulina",
+      "situation": "Kleiner Weiher beim Campingplatz Mulina, auch ohne Übernachtung zugänglich.",
+      "access": "Bushaltestelle \"Vicosoprano Camping\"",
+      "covered": "non",
+      "infrastructure": "Tische, Bänke",
+      "capacity": "",
+      "reservation": "non",
+      "lat": null,
+      "lon": null,
+      "sourcePage": 1
+    },
+    {
+      "id": "gr003",
+      "locality": "Maloja",
+      "description": "Plan Cuncheta",
+      "situation": "Schöner Picknickplatz mit kleinem Strand direkt am Silsersee.",
+      "access": "Ca. 5 Gehminuten vom Campingplatz Richtung Isola",
+      "covered": "non",
+      "infrastructure": "Tische, Bänke, Grill",
+      "capacity": "",
+      "reservation": "non",
+      "lat": null,
+      "lon": null,
+      "sourcePage": 1
+    },
+    {
+      "id": "gr004",
+      "locality": "Maloja",
+      "description": "Seeufer beim Campingplatz",
+      "situation": "Picknickplatz am Seeufer in der Nähe des Campingplatzes Maloja.",
+      "access": "",
+      "covered": "non",
+      "infrastructure": "",
+      "capacity": "",
+      "reservation": "non",
+      "lat": null,
+      "lon": null,
+      "sourcePage": 1
+    },
+    {
+      "id": "gr005",
+      "locality": "Maloja",
+      "description": "Lag da Bitabergh (Lake Bitaberg)",
+      "situation": "Picknickmöglichkeit am kleinen Bergsee Bitaberg oberhalb von Maloja.",
+      "access": "",
+      "covered": "non",
+      "infrastructure": "",
+      "capacity": "",
+      "reservation": "non",
+      "lat": null,
+      "lon": null,
+      "sourcePage": 1
+    },
+    {
+      "id": "gr006",
+      "locality": "Maloja",
+      "description": "Lägh da Cavloc (Lake Cavloccio)",
+      "situation": "Picknickmöglichkeit am beliebten Bergsee Cavloccio.",
+      "access": "",
+      "covered": "non",
+      "infrastructure": "",
+      "capacity": "",
+      "reservation": "non",
+      "lat": null,
+      "lon": null,
+      "sourcePage": 1
+    }
+  ]
+}
