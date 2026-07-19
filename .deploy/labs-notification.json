@@ -1,5 +1,5 @@
 {
   "service": "picnic",
   "url": "https://app.nphilou.ch/picnic",
-  "summary": "Fixed two map bugs: side-panel filters (canton, view, amenities, search, saved-only) now update the map markers, and selecting a spot now flies to it and highlights its pin instead of leaving it hidden in a cluster."
+  "summary": "Mobile layout: shrunk the map to a third of the screen so the filter panel and spot list get two-thirds and are actually usable."
 }
