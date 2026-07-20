@@ -1,5 +1,5 @@
 {
   "service": "picnic",
   "url": "https://app.nphilou.ch/picnic",
-  "summary": "Fixed the \"tables\" amenity flag: it was only detecting the French word \"table\" in the on-site description, so German (Tisch) and Italian (tavolo) spots were wrongly shown as having no tables — 44 spots corrected, mostly in Bern, Glarus, Ticino and Schaffhausen."
+  "summary": "Same language-gap bug fixed for the other amenity flags: grills now detect Italian \"griglia\" and German \"Kamin\", water detects Italian \"acqua potabile\"/\"fontanella\", and toilets detect Italian \"servizi igienici\" — 8 more spots corrected, mostly in Ticino."
 }
