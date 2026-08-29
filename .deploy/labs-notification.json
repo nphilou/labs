@@ -1,5 +1,5 @@
 {
   "service": "picnic",
   "url": "https://app.nphilou.ch/picnic",
-  "summary": "Same language-gap bug fixed for the other amenity flags: grills now detect Italian \"griglia\" and German \"Kamin\", water detects Italian \"acqua potabile\"/\"fontanella\", and toilets detect Italian \"servizi igienici\" — 8 more spots corrected, mostly in Ticino."
+  "summary": "Added 4,142 fire pits from OpenStreetMap (leisure=firepit) across all of Switzerland as a new map layer."
 }
