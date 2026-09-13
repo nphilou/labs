@@ -71,6 +71,9 @@ The `tgtg` app also includes a Go systemd timer backed by
 `1198174` every 20 minutes with a small randomized delay and automatically
 manages the DataDome cookie used by Too Good To Go. It sends a Telegram message
 when at least 3 paniers are available and the price is below 11 CHF.
+The monitor uses a modern Android 17 user agent to avoid the persistent 403
+triggered by the client's older built-in Android identities. Override it with
+`TGTG_USER_AGENT` and `TGTG_APK_VERSION` together if TGTG changes this again.
 
 Create `/var/lib/labs/secrets/tgtg-monitor.env` on the server:
 

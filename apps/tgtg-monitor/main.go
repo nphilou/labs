@@ -22,6 +22,10 @@ const (
 	defaultMaxPrice    = 11.0
 	defaultStatePath   = "/var/lib/labs-tgtg-monitor/state.json"
 	defaultHTTPTimeout = 30 * time.Second
+	// This exact modern Android identity is a confirmed workaround for the
+	// persistent DataDome 403 caused by tgtg-go's older default user agents.
+	compatibilityAPKVersion = "26.7.2"
+	compatibilityUserAgent  = "TGTG/26.7.2 Dalvik/2.1.0 (Linux; U; Android 17; Pixel 8 Pro Build/CP2A.260705.006)"
 )
 
 type monitorState struct {
@@ -89,6 +93,8 @@ func run(ctx context.Context) error {
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
 		Cookie:       cookie,
+		APKVersion:   envOrDefault("TGTG_APK_VERSION", compatibilityAPKVersion),
+		UserAgent:    envOrDefault("TGTG_USER_AGENT", compatibilityUserAgent),
 		Timeout:      defaultHTTPTimeout,
 		Output:       os.Stderr,
 	}

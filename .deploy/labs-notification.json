@@ -1,5 +1,5 @@
 {
   "service": "tgtg",
   "url": "https://app.nphilou.ch/tgtg",
-  "summary": "Migrated the Too Good To Go availability monitor to tgtg-go for automatic DataDome cookie management and retry handling."
+  "summary": "Configured the TGTG monitor with the confirmed Android 17 user agent workaround for persistent DataDome 403 responses."
 }

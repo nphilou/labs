@@ -76,3 +76,9 @@ func TestRedact(t *testing.T) {
 		t.Fatalf("token was not redacted: %q", got)
 	}
 }
+
+func TestCompatibilityUserAgentMatchesAPKVersion(t *testing.T) {
+	if !strings.Contains(compatibilityUserAgent, "TGTG/"+compatibilityAPKVersion+" ") {
+		t.Fatalf("user agent %q does not match APK version %q", compatibilityUserAgent, compatibilityAPKVersion)
+	}
+}
