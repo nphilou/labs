@@ -1,9 +1,12 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
+	"errors"
 	"strings"
 	"testing"
+	"time"
 )
 
 func TestSummarizeItem(t *testing.T) {
@@ -77,8 +80,49 @@ func TestRedact(t *testing.T) {
 	}
 }
 
-func TestCompatibilityUserAgentMatchesAPKVersion(t *testing.T) {
-	if !strings.Contains(compatibilityUserAgent, "TGTG/"+compatibilityAPKVersion+" ") {
-		t.Fatalf("user agent %q does not match APK version %q", compatibilityUserAgent, compatibilityAPKVersion)
+func TestResolveClientIdentityDiscoversAndCachesVersion(t *testing.T) {
+	t.Setenv("TGTG_APK_VERSION", "")
+	t.Setenv("TGTG_USER_AGENT", "")
+	now := time.Date(2026, 9, 13, 20, 0, 0, 0, time.UTC)
+	state := monitorState{}
+	fetches := 0
+
+	apkVersion, userAgent, err := resolveClientIdentity(context.Background(), &state, now, func(context.Context) (string, error) {
+		fetches++
+		return "26.9.4", nil
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if apkVersion != "26.9.4" || !strings.Contains(userAgent, "TGTG/26.9.4 ") {
+		t.Fatalf("unexpected identity: %q %q", apkVersion, userAgent)
+	}
+	if fetches != 1 || state.APKVersion != apkVersion || state.APKVersionCheckedAt == nil {
+		t.Fatalf("version was not cached: fetches=%d state=%+v", fetches, state)
+	}
+
+	apkVersion, _, err = resolveClientIdentity(context.Background(), &state, now.Add(time.Hour), func(context.Context) (string, error) {
+		fetches++
+		return "99.0.0", nil
+	})
+	if err != nil || apkVersion != "26.9.4" || fetches != 1 {
+		t.Fatalf("fresh cached version was not reused: version=%q fetches=%d err=%v", apkVersion, fetches, err)
+	}
+}
+
+func TestResolveClientIdentityFallsBack(t *testing.T) {
+	t.Setenv("TGTG_APK_VERSION", "")
+	t.Setenv("TGTG_USER_AGENT", "")
+	state := monitorState{}
+	wantErr := errors.New("offline")
+
+	apkVersion, userAgent, err := resolveClientIdentity(context.Background(), &state, time.Now(), func(context.Context) (string, error) {
+		return "", wantErr
+	})
+	if !errors.Is(err, wantErr) || apkVersion != fallbackAPKVersion {
+		t.Fatalf("unexpected fallback: version=%q err=%v", apkVersion, err)
+	}
+	if !strings.Contains(userAgent, "TGTG/"+fallbackAPKVersion+" ") {
+		t.Fatalf("user agent %q does not match fallback version", userAgent)
 	}
 }

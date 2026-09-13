@@ -17,15 +17,14 @@ import (
 )
 
 const (
-	defaultItemID      = "1198174"
-	defaultMinStock    = 3
-	defaultMaxPrice    = 11.0
-	defaultStatePath   = "/var/lib/labs-tgtg-monitor/state.json"
-	defaultHTTPTimeout = 30 * time.Second
-	// This exact modern Android identity is a confirmed workaround for the
-	// persistent DataDome 403 caused by tgtg-go's older default user agents.
-	compatibilityAPKVersion = "26.7.2"
-	compatibilityUserAgent  = "TGTG/26.7.2 Dalvik/2.1.0 (Linux; U; Android 17; Pixel 8 Pro Build/CP2A.260705.006)"
+	defaultItemID        = "1198174"
+	defaultMinStock      = 3
+	defaultMaxPrice      = 11.0
+	defaultStatePath     = "/var/lib/labs-tgtg-monitor/state.json"
+	defaultHTTPTimeout   = 30 * time.Second
+	versionCheckInterval = 24 * time.Hour
+	fallbackAPKVersion   = "26.9.4"
+	modernUserAgent      = "TGTG/%s Dalvik/2.1.0 (Linux; U; Android 17; Pixel 8 Pro Build/CP2A.260705.006)"
 )
 
 type monitorState struct {
@@ -34,6 +33,8 @@ type monitorState struct {
 	LastAlertKey         string           `json:"last_alert_key,omitempty"`
 	LastStatus           string           `json:"last_status,omitempty"`
 	LastSeen             *lastSeen        `json:"last_seen,omitempty"`
+	APKVersion           string           `json:"apk_version,omitempty"`
+	APKVersionCheckedAt  *time.Time       `json:"apk_version_checked_at,omitempty"`
 }
 
 type lastSeen struct {
@@ -88,13 +89,18 @@ func run(ctx context.Context) error {
 		return err
 	}
 	cookie := optionalCredential(state.Credentials.Cookie, "TGTG_COOKIE")
+	apkVersion, userAgent, versionErr := resolveClientIdentity(ctx, &state, time.Now(), tgtg.GetLastAPKVersion)
+	if versionErr != nil {
+		fmt.Fprintf(os.Stderr, "failed to discover current TGTG app version; using %s: %v\n", apkVersion, versionErr)
+	}
+	fmt.Fprintf(os.Stderr, "using TGTG app identity version %s\n", apkVersion)
 
 	clientConfig := tgtg.Config{
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
 		Cookie:       cookie,
-		APKVersion:   envOrDefault("TGTG_APK_VERSION", compatibilityAPKVersion),
-		UserAgent:    envOrDefault("TGTG_USER_AGENT", compatibilityUserAgent),
+		APKVersion:   apkVersion,
+		UserAgent:    userAgent,
 		Timeout:      defaultHTTPTimeout,
 		Output:       os.Stderr,
 	}
@@ -163,6 +169,40 @@ func run(ctx context.Context) error {
 	fmt.Printf("%s: available=%d price=%s %s qualifies=%t\n",
 		summary.DisplayName, summary.Available, price, summary.Currency, qualifies)
 	return nil
+}
+
+func resolveClientIdentity(
+	ctx context.Context,
+	state *monitorState,
+	now time.Time,
+	fetchVersion func(context.Context) (string, error),
+) (string, string, error) {
+	apkVersion := strings.TrimSpace(os.Getenv("TGTG_APK_VERSION"))
+	var fetchErr error
+	if apkVersion == "" {
+		apkVersion = strings.TrimSpace(state.APKVersion)
+		needsRefresh := apkVersion == "" || state.APKVersionCheckedAt == nil ||
+			now.Sub(*state.APKVersionCheckedAt) >= versionCheckInterval
+		if needsRefresh {
+			if discovered, err := fetchVersion(ctx); err != nil {
+				fetchErr = err
+			} else if discovered = strings.TrimSpace(discovered); discovered != "" {
+				apkVersion = discovered
+				checkedAt := now
+				state.APKVersion = discovered
+				state.APKVersionCheckedAt = &checkedAt
+			}
+		}
+	}
+	if apkVersion == "" {
+		apkVersion = fallbackAPKVersion
+	}
+
+	userAgent := strings.TrimSpace(os.Getenv("TGTG_USER_AGENT"))
+	if userAgent == "" {
+		userAgent = fmt.Sprintf(modernUserAgent, apkVersion)
+	}
+	return apkVersion, userAgent, fetchErr
 }
 
 func updateCredentials(state *monitorState, client *tgtg.Client) {

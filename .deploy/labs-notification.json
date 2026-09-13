@@ -1,5 +1,5 @@
 {
-  "service": "liana",
-  "url": "https://app.nphilou.ch/liana",
-  "summary": "Switched the site's color palette from warm terracotta tones to a cool sea-glass blue."
+  "service": "tgtg",
+  "url": "https://app.nphilou.ch/tgtg",
+  "summary": "Updated the TGTG monitor to track the current Android app version and send Android consumer headers."
 }

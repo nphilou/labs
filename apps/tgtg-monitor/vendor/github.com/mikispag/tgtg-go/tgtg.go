@@ -324,6 +324,8 @@ func (c *Client) buildHeaders() http.Header {
 	h.Set("Accept-Language", c.Language)
 	h.Set("Content-Type", "application/json; charset=utf-8")
 	h.Set("User-Agent", c.UserAgent)
+	h.Set("X-OS-Type", "ANDROID")
+	h.Set("X-App-Type", "CONSUMER")
 	h.Set("X-Correlation-ID", c.correlationID)
 	if c.AccessToken != "" {
 		h.Set("Authorization", "Bearer "+c.AccessToken)
