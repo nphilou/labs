@@ -13,6 +13,16 @@ ITEM_ENDPOINT = "/item/v8/{item_id}"
 ITEMS_ENDPOINT = "/item/v8/"
 
 
+class CaptchaChallengeError(RuntimeError):
+    """Raised when the API answers with a bot-detection challenge instead of data.
+
+    Too Good To Go sits behind Datadome; polling it occasionally draws a
+    captcha-delivery.com interstitial instead of the real response. That's
+    not an auth problem or a real API error — it's an expected, transient
+    condition callers should skip past rather than treat as a hard failure.
+    """
+
+
 @dataclass
 class Response:
     status_code: int
@@ -76,6 +86,10 @@ class TgtgClient:
             self.refresh_tokens()
             response = self._post(self._get_url(endpoint), json=payload)
         if response.status_code >= 400:
+            if b"captcha-delivery.com" in response.content:
+                raise CaptchaChallengeError(
+                    f"Too Good To Go API request was captcha-challenged: {response.status_code} {response.content!r}"
+                )
             raise RuntimeError(f"Too Good To Go API request failed: {response.status_code} {response.content!r}")
         return response.json()
 

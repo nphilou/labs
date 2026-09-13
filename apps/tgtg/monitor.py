@@ -6,7 +6,7 @@ import urllib.request
 from pathlib import Path
 from typing import Any
 
-from tgtg import TgtgClient
+from tgtg import CaptchaChallengeError, TgtgClient
 
 
 DEFAULT_ITEM_ID = "1198174"
@@ -95,7 +95,17 @@ def main() -> int:
         refresh_token=credential(state, "refresh_token", "TGTG_REFRESH_TOKEN"),
         cookie=credential(state, "cookie", "TGTG_COOKIE"),
     )
-    result = client.get_item(item_id=item_id)
+    try:
+        result = client.get_item(item_id=item_id)
+    except CaptchaChallengeError as exc:
+        # Not a real failure: Datadome occasionally challenges this polling
+        # pattern instead of answering. Skip this cycle rather than exit
+        # non-zero and leave the systemd unit (and unrelated nixos-rebuild
+        # switches on this shared host) marked failed over it.
+        state["last_status"] = "captcha_challenged"
+        save_state(state_path, state)
+        print(f"tgtg monitor skipped this cycle: {exc}", file=sys.stderr)
+        return 0
     state["credentials"] = client.credentials()
 
     item = result.get("item") or {}
