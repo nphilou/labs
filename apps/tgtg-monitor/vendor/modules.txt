@@ -1,0 +1,3 @@
+# github.com/mikispag/tgtg-go v0.0.0-20260911202219-bfa1de25973c
+## explicit; go 1.23
+github.com/mikispag/tgtg-go

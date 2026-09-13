@@ -66,9 +66,11 @@ This sends a message with link: `https://app.nphilou.ch/hello`.
 
 ## Too Good To Go monitor
 
-The `tgtg` app also includes a systemd timer that checks Cote Sushi item
-`1198174` every 20 minutes with a small randomized delay. It sends a Telegram
-message when at least 3 paniers are available and the price is below 11 CHF.
+The `tgtg` app also includes a Go systemd timer backed by
+[`tgtg-go`](https://github.com/mikispag/tgtg-go). It checks Cote Sushi item
+`1198174` every 20 minutes with a small randomized delay and automatically
+manages the DataDome cookie used by Too Good To Go. It sends a Telegram message
+when at least 3 paniers are available and the price is below 11 CHF.
 
 Create `/var/lib/labs/secrets/tgtg-monitor.env` on the server:
 
@@ -77,7 +79,8 @@ sudo install -d -m 700 /var/lib/labs/secrets
 sudo tee /var/lib/labs/secrets/tgtg-monitor.env >/dev/null <<'EOF'
 TGTG_ACCESS_TOKEN=...
 TGTG_REFRESH_TOKEN=...
-TGTG_COOKIE=...
+# Optional, if reusing an existing session cookie:
+# TGTG_COOKIE=...
 TELEGRAM_BOT_TOKEN=...
 TELEGRAM_CHAT_ID=...
 EOF

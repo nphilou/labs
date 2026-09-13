@@ -4,6 +4,12 @@ let
   cfg = config.nphilou.labs;
   port = (import ../ports.nix).tgtg;
   python = pkgs.python3.withPackages (ps: with ps; [ streamlit pandas ]);
+  monitor = pkgs.buildGoModule {
+    pname = "labs-tgtg-monitor";
+    version = "0.1.0";
+    src = ../../apps/tgtg-monitor;
+    vendorHash = null;
+  };
 in
 {
   config = lib.mkIf cfg.enable {
@@ -60,8 +66,7 @@ in
         StateDirectory = "labs-tgtg-monitor";
         StateDirectoryMode = "0700";
         EnvironmentFile = "-/var/lib/labs/secrets/tgtg-monitor.env";
-        WorkingDirectory = ../../apps/tgtg;
-        ExecStart = "${pkgs.python3}/bin/python monitor.py";
+        ExecStart = "${monitor}/bin/tgtg-monitor";
       };
     };
 
