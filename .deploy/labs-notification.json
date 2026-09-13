@@ -1,5 +1,5 @@
 {
-  "service": "tgtg",
-  "url": "https://app.nphilou.ch/tgtg",
-  "summary": "Configured the TGTG monitor with the confirmed Android 17 user agent workaround for persistent DataDome 403 responses."
+  "service": "liana",
+  "url": "https://app.nphilou.ch/liana",
+  "summary": "Switched the site's color palette from warm terracotta tones to a cool sea-glass blue."
 }
